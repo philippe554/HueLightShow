@@ -81,6 +81,7 @@ namespace GLib
 		virtual void update() {};
 		virtual void winEvent(Frame* frame, HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {};
 		virtual void resized() {};
+		virtual void worker() {};
 
 		void forwardMouseEvent(int type, int x, int y);
 

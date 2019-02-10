@@ -52,6 +52,16 @@ std::vector<float> getHann(int size)
 	return data;
 }
 
+std::map<int, float> getGaussian(int size, float std)
+{
+	std::map<int, float> g;
+	for (int i = -size; i <= size; i++)
+	{
+		g[i] = 1.0 / (std::sqrt(2.0 * PI * std::pow(std, 2.0))) * std::pow(std::exp(1), - std::pow(i, 2.0) / (2.0 * std::pow(std, 2.0)));
+	}
+	return g;
+}
+
 std::vector<std::pair<float, float>> getMusic()
 {
 	std::vector<std::pair<float, float>> data;
@@ -67,8 +77,8 @@ std::vector<std::pair<float, float>> getMusic()
 	//mpg123_open(mh, "C:\\dev\\data\\avicii.mp3");
 	//mpg123_open(mh, "C:\\dev\\data\\waiting.mp3");
 	//mpg123_open(mh, "C:\\dev\\data\\dondiablo.mp3");
-	//mpg123_open(mh, "C:\\dev\\data\\spons.mp3");
-	mpg123_open(mh, "C:\\dev\\data\\deepmix1.mp3");
+	mpg123_open(mh, "C:\\dev\\data\\spons.mp3");
+	//mpg123_open(mh, "C:\\dev\\data\\deepmix1.mp3");
 
 	int channels;
 	int encoding;
@@ -191,6 +201,29 @@ std::pair<std::vector<int>, std::vector<float>> calculateBeat(const std::vector<
 	return beatData;
 }
 
+std::vector<float> calculateEnergyPerBeat(const std::vector<int>& beat, const std::vector<std::pair<float, float>>& data)
+{
+	std::vector<float> energy;
+
+	for (int j = 0; j < beat.size() - 1; j++)
+	{
+		int from = beat[j];
+		int to = beat[j + 1];
+
+		if (to < data.size())
+		{
+			double squareSum = 0;
+			for (int i = from; i < to; i++)
+			{
+				squareSum += 0.5 * (data[i].first * data[i].first + data[i].second * data[i].second);
+			}
+			energy.push_back(std::sqrt(squareSum / (to - from)));
+		}
+	}
+
+	return energy;
+}
+
 std::vector<std::pair<int, int>> getLogGroups(int size, int amountOfGroups)
 {
 	std::vector<std::pair<int, int>> groups;
@@ -214,11 +247,12 @@ std::vector<int> calculateSongPart(const std::vector<std::pair<float, float>>& s
 {
 	const int amountOfGroups = 12;
 	typedef dlib::matrix<float, 12, 1> SampleType;
+	typedef dlib::radial_basis_kernel<SampleType> KernelType;
 
 	std::vector<int> songPart; // = { 0 };
 	std::vector<SampleType> fftData;
 
-	int inputSize = SAMPLE_RATE * 0.25;
+	int inputSize = SAMPLE_RATE;
 	int outputSize = inputSize / 2 + 1;
 
 	std::vector<std::pair<int, int>> groups = getLogGroups(outputSize, amountOfGroups);
@@ -234,6 +268,8 @@ std::vector<int> calculateSongPart(const std::vector<std::pair<float, float>>& s
 	fftw_complex* outputBuffer = fftw_alloc_complex(outputSize * sizeof(fftw_complex));
 	fftw_plan plan = fftw_plan_dft_r2c_1d(inputSize, inputBuffer, outputBuffer, FFTW_ESTIMATE);
 
+	std::vector<float> e = calculateEnergyPerBeat(beat, song);
+
 	for (int i = 0; i < beat.size() - 1; i++)
 	{
 		int middle = beat[i]; // beat[i + 1] - beat[i];
@@ -241,30 +277,31 @@ std::vector<int> calculateSongPart(const std::vector<std::pair<float, float>>& s
 		{
 			for (int j = 0; j < inputSize; j++)
 			{
-				inputBuffer[j] = song[middle - inputSize / 2 + j].first * hann[j];
+				inputBuffer[j] = (song[middle - inputSize / 2 + j].first + song[middle - inputSize / 2 + j].second) * 0.5 * hann[j];
 			}
 
 			fftw_execute(plan);
 
 			SampleType sample;
-			for (int j = 0; j < 12; j++)
+			for (int j = 0; j < 11; j++)
 			{
 				float sum = 0;
-				for (int k = groups[j].first; k <= groups[j].second; k++)
+				for (int k = groups[j + 1].first; k <= groups[j + 1].second; k++)
 				{
 					sum += sqrt(outputBuffer[k][0] * outputBuffer[k][0] + outputBuffer[k][1] * outputBuffer[k][1]);
 				}
-				sample(j) = (sum / (groups[j].second - groups[j].first + 1));
+				sample(j) = (sum / (groups[j + 1].second - groups[j + 1].first + 1));
 			}
+			sample(11) = e[i];
 
 			fftData.push_back(sample);
 		}
 	}
 
-	std::vector<SampleType> centers;
+	/*std::vector<SampleType> centers;
 	dlib::pick_initial_centers(amountOfClusters, centers, fftData, dlib::linear_kernel<SampleType>());
 	dlib::find_clusters_using_kmeans(fftData, centers);
-
+	
 	for (auto c : centers)
 	{
 		for (auto e : c)
@@ -289,6 +326,19 @@ std::vector<int> calculateSongPart(const std::vector<std::pair<float, float>>& s
 		}
 		songPart.push_back(best);
 	}
+	*/
+
+	dlib::kcentroid<KernelType> kc(KernelType(0.1), 0.001, 8);
+	dlib::kkmeans<KernelType> test(kc);
+	std::vector<SampleType> initial_centers;
+	test.set_number_of_centers(amountOfClusters);
+	dlib::pick_initial_centers(amountOfClusters, initial_centers, fftData, test.get_kernel());
+	test.train(fftData, initial_centers);
+
+	for (int i = 0; i < beat.size() - 1; i++)
+	{
+		songPart.push_back(test(fftData[i]));
+	}
 
 	fftw_free(inputBuffer);
 	fftw_free(outputBuffer);
@@ -297,9 +347,40 @@ std::vector<int> calculateSongPart(const std::vector<std::pair<float, float>>& s
 	return songPart;
 }
 
-std::vector<int> cleanSongPart(const std::vector<int>& data)
+std::vector<int> cleanSongPart(std::vector<int> data, int amountOfSongParts)
 {
+	std::vector<int> newSet;
+	std::map<int, float> g = getGaussian(20, 4);
 
+	for (int i = 0; i < data.size(); i++)
+	{
+		float max = 0;
+		int maxIndex = 0;
+
+		for (int j = 0; j < amountOfSongParts; j++)
+		{
+			float v = 0;
+			for (int k = -10; k <= 10; k++)
+			{
+				if (i + k >= 0 && i + k < data.size())
+				{
+					if (data[i + k] == j)
+					{
+						v += g[k];
+					}
+				}
+			}
+			if (v > max)
+			{
+				max = v;
+				maxIndex = j;
+			}
+		}
+
+		newSet.push_back(maxIndex);
+	}
+
+	return newSet;
 }
 
 std::vector<float> calculateFFT(const std::vector<std::pair<float, float>>& data)
@@ -341,29 +422,6 @@ std::vector<float> calculateFFT(const std::vector<std::pair<float, float>>& data
 	fftw_destroy_plan(plan);
 
 	return fft;
-}
-
-std::vector<float> calculateEnergyPerBeat(const std::vector<int>& beat, const std::vector<std::pair<float, float>>& data)
-{
-	std::vector<float> energy;
-
-	for (int j = 0; j < beat.size() - 1; j++)
-	{
-		int from = beat[j];
-		int to = beat[j + 1];
-
-		if (to < data.size())
-		{
-			double squareSum = 0;
-			for (int i = from; i < to; i++)
-			{
-				squareSum += 0.5 * (data[i].first * data[i].first + data[i].second * data[i].second);
-			}
-			energy.push_back(std::sqrt(squareSum / (to - from)));
-		}
-	}
-
-	return energy;
 }
 
 std::vector<float> calculateAvgEnergyPerSongPart(const std::vector<float>& energyPerBeat, const std::vector<int>& songPart, int amountOfClusters)
@@ -505,6 +563,11 @@ public:
 		soundPlot->setPosition(float(location) / data.size());
 	}
 
+	void sentSongData(std::shared_ptr<SongData> sd)
+	{
+		songData = sd;
+	}
+
 private:
 	void workerFunction()
 	{
@@ -534,8 +597,9 @@ private:
 			GLib::Out << "beat calculated\n";
 
 			energyPerBeat = calculateEnergyPerBeat(beat, data);
-			songPart = calculateSongPart(data, beat, 8);
-			avgEnergyPerSongPart = calculateAvgEnergyPerSongPart(energyPerBeat, songPart, 8);
+			songPart = calculateSongPart(data, beat, 4);
+			songPart = cleanSongPart(songPart, 4);
+			avgEnergyPerSongPart = calculateAvgEnergyPerSongPart(energyPerBeat, songPart, 4);
 
 			for (auto e : avgEnergyPerSongPart)
 			{
@@ -569,7 +633,7 @@ private:
 					}
 				}
 
-				float confidenceBias = (1 - beatConfidence[i]) * 0.25;
+				float confidenceBias = (1 - beatConfidence[i]) * 0.1;
 
 				lightShow->addEffect(0, std::make_shared<LightEffectFlash>(float(beat[i]) / SAMPLE_RATE, LightColor(0.5, 0.5, 0.5), 0.1 + confidenceBias, 0.1, 0.2 + confidenceBias));
 				lightShow->addEffect(3, std::make_shared<LightEffectFlash>(float(beat[i]) / SAMPLE_RATE, LightColor(0.5, 0.5, 0.5), 0.1 + confidenceBias, 0.1, 0.2 + confidenceBias));
@@ -664,6 +728,10 @@ private:
 private:
 	std::mutex dataMutex;
 	int location = 0;
+
+
+	std::shared_ptr<SongData> songData;
+
 	std::vector<std::pair<float,float>> data;
 	std::unique_ptr<std::thread> workerThread;
 	bool play = true;

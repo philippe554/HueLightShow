@@ -32,5 +32,11 @@
     <ClInclude Include="LightEffect.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="LoadSong.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SongData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

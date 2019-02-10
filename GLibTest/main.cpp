@@ -2,6 +2,7 @@
 #include "GLibMain.h"
 
 #include "MediaPlayer.h"
+#include "LoadSong.h"
 
 void GLibMain(GLib::Frame* frame)
 {
@@ -12,11 +13,13 @@ void GLibMain(GLib::Frame* frame)
 	auto tabs = frame->addView<GLib::TabView>(0, 50);
 
 	auto playerTab = tabs->getNewTab(" Player");
+	auto loadTab = tabs->getNewTab(" Load");
+	auto consoleTab = tabs->getNewTab(" Console");
 
-	auto bottomView = playerTab->addView<GLib::MovingView>(0, 500, -1, -1, false, true)->getMovingView();
-	bottomView->addView<GLib::OutputView>()->setDefault();
+	consoleTab->addView<GLib::MovingView>(0, 0, -1, -1, false, true)->getMovingView()->addView<GLib::OutputView>()->setDefault();
 
-	playerTab->addView<MediaPlayer>(0, 0, -1, 500);
+	auto player = playerTab->addView<MediaPlayer>(0, 0, -1, 500);
+	loadTab->addView<LoadSong>(player);
 
 	//auto hueTab = tabs->getNewTab(" Hue");
 }

@@ -2,6 +2,8 @@
 
 #include "GLibMain.h"
 
+#include "SongData.h"
+
 using namespace GLib;
 
 class SoundPlot : public View
