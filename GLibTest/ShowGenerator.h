@@ -4,6 +4,7 @@
 
 #include "SongData.h"
 #include "MediaPlayer.h"
+#include "ShowPlot.h"
 
 using namespace GLib;
 
@@ -64,6 +65,11 @@ public:
 			scheduled = true;
 		}, "  Create");
 
+		addView<Button>(400, 60, 20, 40, []() {})->setHorizontalDragable(400, 500, [&](float ratio) {amountOfClusters = (ratio * 5) + 1; });
+
+		View* movingSoundPlot = addView<GLib::MovingView>(0, 200, -1, 120, true, false)->getMovingView();
+		showPlot = movingSoundPlot->addView<ShowPlot>();
+
 		mediaPlayer = mp;
 
 		workerThread = std::make_unique<std::thread>(&ShowGenerator::worker, this);
@@ -86,6 +92,8 @@ public:
 		{
 			w->print("Scheduled...", c->get(C::Black), w->get(20), { 330, 20, 500, 60 });
 		}
+
+		w->print(std::to_string(amountOfClusters), c->get(C::Black), w->get(20), { 330, 60, 500, 100 });
 	}
 
 private:
@@ -126,11 +134,11 @@ private:
 				for (int j = 0; j < 12; j++)
 				{
 					float sum = 0;
-					for (int k = groups[j + 1].first; k <= groups[j + 1].second; k++)
+					for (int k = groups[j].first; k <= groups[j].second; k++)
 					{
 						sum += sqrt(outputBuffer[k][0] * outputBuffer[k][0] + outputBuffer[k][1] * outputBuffer[k][1]);
 					}
-					sample(j) = (sum / (groups[j + 1].second - groups[j + 1].first + 1));
+					sample(j) = (sum / (groups[j].second - groups[j].first + 1));
 				}
 				//sample(11) = e[i];
 
@@ -218,6 +226,7 @@ private:
 				cleanSongPart(songPartDataLocal, n);
 
 				songPartData = std::move(songPartDataLocal);
+				showPlot->setSongPartData(songData, songPartData);
 				inProgress = false;
 			}
 			else
@@ -236,4 +245,5 @@ private:
 	bool scheduled = false;
 	int amountOfClusters = 4;
 	std::shared_ptr<const SongPartData> songPartData;
+	ShowPlot* showPlot;
 };

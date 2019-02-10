@@ -105,6 +105,7 @@ private:
 
 				inProgress = true;
 				phase = 0;
+				pos = 0;
 				mpg123_open(mh, nextFileCopy.c_str());
 				int channels;
 				int encoding;
@@ -170,8 +171,6 @@ private:
 
 		if (inProgress)
 		{
-			songData.reset();
-			inProgress = false;
 			Aubio::del_aubio_tempo(o);
 			mpg123_close(mh);
 		}
@@ -181,6 +180,7 @@ private:
 
 		Aubio::del_fvec(in);
 		Aubio::del_fvec(out);
+		Aubio::aubio_cleanup();
 
 		delete[] buffer;
 	}

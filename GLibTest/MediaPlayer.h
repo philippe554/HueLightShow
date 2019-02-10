@@ -704,7 +704,6 @@ private:
 	std::mutex dataMutex;
 	int location = 0;
 
-
 	std::shared_ptr<const SongData> songData;
 
 	std::vector<std::pair<float,float>> data;
