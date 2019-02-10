@@ -38,5 +38,8 @@
     <ClInclude Include="SongData.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="ShowGenerator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

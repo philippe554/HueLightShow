@@ -13,19 +13,26 @@ namespace GLib
 			for (auto tab : tabs)
 			{
 				tab->renderFlag = false;
+				tab->mouseEventFlag = false;
+				tab->winEventFlag = false;
 			}
 			e->renderFlag = true;
+			e->mouseEventFlag = true;
+			e->winEventFlag = true;
 
 			currentTab = index;
 		}, name);
 
-		for (auto tab : tabs)
+		if (currentTab == -1)
 		{
-			tab->renderFlag = false;
+			currentTab = 0;
 		}
-		e->renderFlag = true;
-
-		currentTab = tabs.size() - 1;
+		else
+		{
+			e->renderFlag = false;
+			e->mouseEventFlag = false;
+			e->winEventFlag = false;
+		}
 
 		return e;
 	}

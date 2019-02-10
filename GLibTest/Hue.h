@@ -113,7 +113,7 @@ public:
 		if (workerThread)
 		{
 			workerThread->join();
-			workerThread.release();
+			workerThread.reset();
 		}
 	}
 

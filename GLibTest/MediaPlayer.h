@@ -41,7 +41,7 @@ std::vector<LightColor> niceColors =
 
 using namespace GLib;
 
-std::vector<float> getHann(int size)
+/*std::vector<float> getHann(int size)
 {
 	std::vector<float> data(size);
 
@@ -298,36 +298,6 @@ std::vector<int> calculateSongPart(const std::vector<std::pair<float, float>>& s
 		}
 	}
 
-	/*std::vector<SampleType> centers;
-	dlib::pick_initial_centers(amountOfClusters, centers, fftData, dlib::linear_kernel<SampleType>());
-	dlib::find_clusters_using_kmeans(fftData, centers);
-	
-	for (auto c : centers)
-	{
-		for (auto e : c)
-		{
-			GLib::Out << e << " ";
-		}
-		GLib::Out << "\n";
-	}
-
-	for (int i = 0; i < beat.size() - 1; i++)
-	{
-		float minimum = -1;
-		int best = -1;
-		for (int j = 0; j < centers.size(); j++)
-		{
-			float dist = dlib::length(centers[j] - fftData[i]);
-			if (minimum == -1 || dist < minimum)
-			{
-				minimum = dist;
-				best = j;
-			}
-		}
-		songPart.push_back(best);
-	}
-	*/
-
 	dlib::kcentroid<KernelType> kc(KernelType(0.1), 0.001, 8);
 	dlib::kkmeans<KernelType> test(kc);
 	std::vector<SampleType> initial_centers;
@@ -447,7 +417,7 @@ std::vector<float> calculateAvgEnergyPerSongPart(const std::vector<float>& energ
 
 	return avg;
 }
-
+*/
 void errorWrapper(PaError error)
 {
 	if (error != paNoError)
@@ -488,7 +458,7 @@ public:
 	{
 		stop = true;
 		workerThread->join();
-		workerThread.release();
+		workerThread.reset();
 	}
 
 	void render(RT* rt, Writer* w, Color* c, D2D1_RECT_F& visibleRect) override
@@ -563,15 +533,20 @@ public:
 		soundPlot->setPosition(float(location) / data.size());
 	}
 
-	void sentSongData(std::shared_ptr<SongData> sd)
+	void setSongData(std::shared_ptr<const SongData> sd)
 	{
 		songData = sd;
+	}
+
+	std::shared_ptr<const SongData> getSongData()
+	{
+		return songData;
 	}
 
 private:
 	void workerFunction()
 	{
-		try
+		/*try
 		{
 			GLib::Out << "Worker started\n";
 
@@ -586,9 +561,9 @@ private:
 			soundPlot->setFFT(fft);
 			GLib::Out << "FFT calculated\n";
 
-			/*onset = calculateOnset(data);
-			soundPlot->setOnset(onset, data.size());
-			GLib::Out << "onset calculated\n";*/
+			//onset = calculateOnset(data);
+			//soundPlot->setOnset(onset, data.size());
+			//GLib::Out << "onset calculated\n";
 
 			auto beatData = calculateBeat(data);
 			beat = beatData.first;
@@ -722,7 +697,7 @@ private:
 			GLib::Out << e.what() << "\n";
 		}
 
-		Pa_Terminate();
+		Pa_Terminate();*/
 	}
 
 private:
@@ -730,7 +705,7 @@ private:
 	int location = 0;
 
 
-	std::shared_ptr<SongData> songData;
+	std::shared_ptr<const SongData> songData;
 
 	std::vector<std::pair<float,float>> data;
 	std::unique_ptr<std::thread> workerThread;

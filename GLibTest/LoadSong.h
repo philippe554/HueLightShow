@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GLibMain.h"
+#include "GLib.h"
 
 #include "SongData.h"
-#include "SoundPlot.h"
+#include "MediaPlayer.h"
 
 using namespace GLib;
 
@@ -48,12 +48,12 @@ public:
 	{
 		stop = true;
 		workerThread->join();
-		workerThread.release();
+		workerThread.reset();
 	}
 
 	void render(RT* rt, Writer* w, Color* c, D2D1_RECT_F& visibleRect) override
 	{
-		if (loadInProgress)
+		if (inProgress)
 		{
 			w->print("Loading...", c->get(C::Black), w->get(20), {330, 20, 500, 60});
 		}
@@ -79,7 +79,7 @@ private:
 		Aubio::fvec_t * in = Aubio::new_fvec(hopSize);
 		Aubio::fvec_t * out = Aubio::new_fvec(1);
 
-		std::shared_ptr<SongData> songData;
+		std::unique_ptr<SongData> songData;
 
 		while (!stop)
 		{
@@ -93,15 +93,17 @@ private:
 				nextFile = "";
 				workerMutex.unlock();
 
-				if (loadInProgress)
+				mediaPlayer->setSongData(nullptr);
+
+				if (inProgress)
 				{
-					songData = nullptr;
-					loadInProgress = false;
+					songData.reset();
+					inProgress = false;
 					Aubio::del_aubio_tempo(o);
 					mpg123_close(mh);
 				}
 
-				loadInProgress = true;
+				inProgress = true;
 				phase = 0;
 				mpg123_open(mh, nextFileCopy.c_str());
 				int channels;
@@ -111,10 +113,10 @@ private:
 
 				o = Aubio::new_aubio_tempo("default", windowSize, hopSize, rate);
 
-				songData = std::make_shared<SongData>();
+				songData = std::make_unique<SongData>();
 				songData->sampleRate = rate;
 			}
-			if (loadInProgress)
+			if (inProgress)
 			{
 				if (phase == 0)
 				{
@@ -152,9 +154,8 @@ private:
 					}
 					else
 					{
-						mediaPlayer->sentSongData(songData);
-						songData = nullptr;
-						loadInProgress = false;
+						mediaPlayer->setSongData(std::move(songData));
+						inProgress = false;
 						Aubio::del_aubio_tempo(o);
 						mpg123_close(mh);
 						phase = 0;
@@ -167,10 +168,10 @@ private:
 			}
 		}
 
-		if (loadInProgress)
+		if (inProgress)
 		{
-			songData = nullptr;
-			loadInProgress = false;
+			songData.reset();
+			inProgress = false;
 			Aubio::del_aubio_tempo(o);
 			mpg123_close(mh);
 		}
@@ -190,5 +191,5 @@ private:
 	std::mutex workerMutex;
 	bool stop = false;
 	MediaPlayer* mediaPlayer;
-	bool loadInProgress = false;
+	bool inProgress = false;
 };

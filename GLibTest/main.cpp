@@ -3,6 +3,7 @@
 
 #include "MediaPlayer.h"
 #include "LoadSong.h"
+#include "ShowGenerator.h"
 
 void GLibMain(GLib::Frame* frame)
 {
@@ -14,12 +15,15 @@ void GLibMain(GLib::Frame* frame)
 
 	auto playerTab = tabs->getNewTab(" Player");
 	auto loadTab = tabs->getNewTab(" Load");
+	auto generateTab = tabs->getNewTab(" Generate");
 	auto consoleTab = tabs->getNewTab(" Console");
 
 	consoleTab->addView<GLib::MovingView>(0, 0, -1, -1, false, true)->getMovingView()->addView<GLib::OutputView>()->setDefault();
 
 	auto player = playerTab->addView<MediaPlayer>(0, 0, -1, 500);
+
 	loadTab->addView<LoadSong>(player);
+	generateTab->addView<ShowGenerator>(player);
 
 	//auto hueTab = tabs->getNewTab(" Hue");
 }

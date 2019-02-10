@@ -10,3 +10,9 @@ public:
 	std::vector<float> beatConfidence;
 	int sampleRate;
 };
+
+class SongPartData
+{
+public:
+	std::vector<int> data;
+};

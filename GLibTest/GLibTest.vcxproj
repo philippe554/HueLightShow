@@ -26,6 +26,7 @@
     <ClInclude Include="LightEffect.h" />
     <ClInclude Include="LoadSong.h" />
     <ClInclude Include="MediaPlayer.h" />
+    <ClInclude Include="ShowGenerator.h" />
     <ClInclude Include="SongData.h" />
     <ClInclude Include="SoundPlot.h" />
   </ItemGroup>
