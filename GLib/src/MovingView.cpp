@@ -10,6 +10,9 @@ namespace GLib
 		horizontal = _horizontal;
 		vertical = _vertical;
 
+		horizontalScrollZoom = false;
+		verticalScrollZoom = false;
+
 		if (vertical && !horizontal)
 		{
 			staticView = addView<View>(0, 0, xSize - buttonSize, ySize);
@@ -58,15 +61,57 @@ namespace GLib
 
 	void MovingView::winEvent(Frame * frame, HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		if (message == WM_MOUSEWHEEL && vertical && verticalBar->activated)
+		if (message == WM_MOUSEWHEEL)
 		{
-			verticalBar->moveVerticalPlace(GET_WHEEL_DELTA_WPARAM(wParam)*-0.2);
+			if (vertical && verticalBar->activated && (!verticalScrollZoom && !horizontalScrollZoom))
+			{
+				verticalBar->moveVerticalPlace(GET_WHEEL_DELTA_WPARAM(wParam)*-0.2);
+			}
+
+			if (horizontalScrollZoom)
+			{
+				int mouseX = getMousePosition().first;
+				float zoom = GET_WHEEL_DELTA_WPARAM(wParam);
+				float ratio = (mouseX - movingView->place.left) / (movingView->place.right - movingView->place.left);
+
+				movingView->place.left -= zoom * ratio;
+				if (movingView->place.left > 0)
+				{
+					movingView->place.left = 0;
+				}
+
+				movingView->place.right += zoom * (1 - ratio);
+				if (movingView->place.right < (place.right - place.left))
+				{
+					movingView->place.right = place.right - place.left;
+				}
+				
+				float xSize = movingView->place.right - movingView->place.left;
+				float ySize = movingView->place.bottom - movingView->place.top;
+				resize(xSize, ySize);
+
+				for (auto v : movingView->subViews)
+				{
+					v->parentResized(movingView->place);
+				}
+			}
+
+			if (verticalScrollZoom)
+			{
+				int mouseY = getMousePosition().second;
+			}
 		}
 	}
 
 	View * MovingView::getMovingView()
 	{
 		return movingView;
+	}
+
+	void MovingView::setScrollZoom(bool _horizontal, bool _vertical)
+	{
+		horizontalScrollZoom = _horizontal;
+		verticalScrollZoom = _vertical;
 	}
 
 	void MovingView::setup(int xSize, int ySize)

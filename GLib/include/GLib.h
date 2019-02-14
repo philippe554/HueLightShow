@@ -37,6 +37,7 @@ namespace GLib
 		template <typename R, typename... Ts> R* addView(Ts&&... args)
 		{
 			R* e = new R(this, 0, 0, -1, -1);
+			e->parentView = this;
 			e->init(std::forward<Ts>(args)...);
 			subViews.push_back(e);
 			return e;
@@ -45,6 +46,7 @@ namespace GLib
 		template <typename R, typename... Ts> R* addView(int x, int y, Ts&&... args)
 		{
 			R* e = new R(this, x, y, -1, -1);
+			e->parentView = this;
 			e->init(std::forward<Ts>(args)...);
 			subViews.push_back(e);
 			return e;
@@ -53,12 +55,20 @@ namespace GLib
 		template <typename R, typename... Ts> R* addView(int x, int y, int width, int height, Ts&&... args)
 		{
 			R* e = new R(this, x, y, width, height);
+			e->parentView = this;
 			e->init(std::forward<Ts>(args)...);
 			subViews.push_back(e);
 			return e;
 		}
 
 		void addMouseListener(int type, std::function<void(int, int)> f);
+
+		std::pair<int, int> getMousePosition();
+
+		virtual void parentResized(D2D1_RECT_F p) {};
+		View* getParentView();
+
+	public:
 
 		D2D1_RECT_F place;
 
@@ -80,12 +90,17 @@ namespace GLib
 		virtual void render(RT* rt, Writer* w, Color* c, D2D1_RECT_F& visibleRect) {};
 		virtual void update() {};
 		virtual void winEvent(Frame* frame, HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {};
-		virtual void resized() {};
 		virtual void worker() {};
 
 		void forwardMouseEvent(int type, int x, int y);
 
+	private:
+		View* parentView = nullptr;
+
 		std::map<int, std::function<void(int, int)>> mouseFunctions;
+
+		int mouseX = 0;
+		int mouseY = 0;
 	};
 
 	class Writer
@@ -204,6 +219,8 @@ namespace GLib
 
 		View* getMovingView();
 
+		void setScrollZoom(bool _horizontal, bool _vertical);
+
 	private:
 		void setup(int xSize, int ySize);
 		void resize(int horizontalSize, int verticalSize);
@@ -213,6 +230,9 @@ namespace GLib
 
 		bool vertical;
 		bool horizontal;
+
+		bool verticalScrollZoom;
+		bool horizontalScrollZoom;
 
 		Button* left;
 		Button* right;

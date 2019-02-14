@@ -8,6 +8,16 @@
 
 using namespace GLib;
 
+std::vector<LightColor> niceColors =
+{
+	LightColor(1, 0, 0),
+	LightColor(0, 1, 0),
+	LightColor(0, 0, 1),
+	LightColor(1, 1, 0),
+	LightColor(1, 0, 1),
+	LightColor(0, 1, 1)
+};
+
 std::vector<float> getHann(int size)
 {
 	std::vector<float> data(size);
@@ -67,7 +77,10 @@ public:
 
 		addView<Button>(400, 60, 20, 40, []() {})->setHorizontalDragable(400, 500, [&](float ratio) {amountOfClusters = (ratio * 5) + 1; });
 
-		View* movingSoundPlot = addView<GLib::MovingView>(0, 200, -1, 120, true, false)->getMovingView();
+		MovingView* movingView = addView<GLib::MovingView>(0, 200, -1, 120, true, false);
+		movingView->setScrollZoom(true, false);
+
+		View* movingSoundPlot = movingView->getMovingView();
 		showPlot = movingSoundPlot->addView<ShowPlot>();
 
 		mediaPlayer = mp;
@@ -97,80 +110,93 @@ public:
 	}
 
 private:
-	std::vector<int> calculateSongPart(std::shared_ptr<const SongData> songData, int amountOfClusters)
+	std::vector<std::vector<float>> calculateFft(std::shared_ptr<const SongData> songData, int inputSize, const int amountOfGroups)
 	{
-		const int amountOfGroups = 12;
-		typedef dlib::matrix<float, 12, 1> SampleType;
-		typedef dlib::radial_basis_kernel<SampleType> KernelType;
-
-		std::vector<int> songPart;
-		std::vector<SampleType> fftData;
-
-		int inputSize = SAMPLE_RATE;
 		int outputSize = inputSize / 2 + 1;
-
-		std::vector<std::pair<int, int>> groups = getLogGroups(outputSize, amountOfGroups);
-		std::vector<float> hann = getHann(inputSize);
 
 		double* inputBuffer = fftw_alloc_real(inputSize * sizeof(double));
 		fftw_complex* outputBuffer = fftw_alloc_complex(outputSize * sizeof(fftw_complex));
 		fftw_plan plan = fftw_plan_dft_r2c_1d(inputSize, inputBuffer, outputBuffer, FFTW_ESTIMATE);
 
-		//std::vector<float> e = calculateEnergyPerBeat(beat, song);
+		std::vector<float> hann = getHann(inputSize);
+		std::vector<std::pair<int, int>> groups = getLogGroups(outputSize, amountOfGroups);
+		std::vector<std::vector<float>> fft;
 
-		for (int i = 0; i < songData->beat.size() - 1; i++)
+		for (int i = 0; i < songData->beat.size(); i++)
 		{
-			int middle = songData->beat[i]; // beat[i + 1] - beat[i];
-			//if (middle - inputSize / 2 >= 0 && middle + inputSize / 2 < song.size())
+			int middle = songData->beat[i];
+
+			for (int j = 0; j < inputSize; j++)
 			{
-				for (int j = 0; j < inputSize; j++)
+				if (0 <= middle - inputSize / 2 + j && middle - inputSize / 2 + j < songData->data.size())
 				{
 					inputBuffer[j] = (songData->data[middle - inputSize / 2 + j].first + songData->data[middle - inputSize / 2 + j].second) * 0.5 * hann[j];
 				}
-
-				fftw_execute(plan);
-
-				SampleType sample;
-				for (int j = 0; j < 12; j++)
+				else
 				{
-					float sum = 0;
-					for (int k = groups[j].first; k <= groups[j].second; k++)
-					{
-						sum += sqrt(outputBuffer[k][0] * outputBuffer[k][0] + outputBuffer[k][1] * outputBuffer[k][1]);
-					}
-					sample(j) = (sum / (groups[j].second - groups[j].first + 1));
+					inputBuffer[j] = 0;
 				}
-				//sample(11) = e[i];
-
-				fftData.push_back(sample);
 			}
-		}
 
-		dlib::kcentroid<KernelType> kc(KernelType(0.1), 0.001, 8);
-		dlib::kkmeans<KernelType> test(kc);
-		std::vector<SampleType> initial_centers;
-		test.set_number_of_centers(amountOfClusters);
-		dlib::pick_initial_centers(amountOfClusters, initial_centers, fftData, test.get_kernel());
-		test.train(fftData, initial_centers);
+			fftw_execute(plan);
 
-		for (int i = 0; i < songData->beat.size() - 1; i++)
-		{
-			songPart.push_back(test(fftData[i]));
+			fft.emplace_back();
+
+			for (int j = 0; j < amountOfGroups; j++)
+			{
+				float sum = 0;
+				for (int k = groups[j].first; k <= groups[j].second; k++)
+				{
+					sum += sqrt(outputBuffer[k][0] * outputBuffer[k][0] + outputBuffer[k][1] * outputBuffer[k][1]);
+				}
+				fft.back().emplace_back(sum / (groups[j].second - groups[j].first + 1));
+			}
 		}
 
 		fftw_free(inputBuffer);
 		fftw_free(outputBuffer);
 		fftw_destroy_plan(plan);
 
+		return fft;
+	}
+	std::vector<int> cluster(std::vector<std::vector<float>>& fft, int from, int to, int amountOfClusters, int inputSize, const int amountOfGroups)
+	{
+		typedef dlib::matrix<float> SampleType;
+		typedef dlib::radial_basis_kernel<SampleType> KernelType;
+
+		std::vector<int> songPart;
+		std::vector<SampleType> fftMatrix;
+
+		for (int i = from; i < to; i++)
+		{
+			SampleType sample(amountOfGroups, 1);
+			for (int j = 0; j < amountOfGroups; j++)
+			{
+				sample(j) = fft[i][j];
+			}
+			fftMatrix.push_back(sample);
+		}
+
+		dlib::kcentroid<KernelType> kc(KernelType(0.1), 0.001, 8);
+		dlib::kkmeans<KernelType> test(kc);
+		std::vector<SampleType> initial_centers;
+		test.set_number_of_centers(amountOfClusters);
+		dlib::pick_initial_centers(amountOfClusters, initial_centers, fftMatrix, test.get_kernel());
+		test.train(fftMatrix, initial_centers);
+
+		for (int i = 0; i < fftMatrix.size(); i++)
+		{
+			songPart.push_back(test(fftMatrix[i]));
+		}
+
 		return songPart;
 	}
-
 	void cleanSongPart(std::unique_ptr<SongPartData>& songPartData, int amountOfSongParts)
 	{
 		std::vector<int> newSet;
 		std::map<int, float> g = getGaussian(20, 4);
 
-		for (int i = 0; i < songPartData->data.size(); i++)
+		for (int i = 0; i < songPartData->dataL1.size(); i++)
 		{
 			float max = 0;
 			int maxIndex = 0;
@@ -180,9 +206,9 @@ private:
 				float v = 0;
 				for (int k = -10; k <= 10; k++)
 				{
-					if (i + k >= 0 && i + k < songPartData->data.size())
+					if (i + k >= 0 && i + k < songPartData->dataL1.size())
 					{
-						if (songPartData->data[i + k] == j)
+						if (songPartData->dataL1[i + k] == j)
 						{
 							v += g[k];
 						}
@@ -198,13 +224,54 @@ private:
 			newSet.push_back(maxIndex);
 		}
 
-		songPartData->data = newSet;
+		songPartData->dataL1 = newSet;
+	}
+	std::unique_ptr<SongPartData> calculateSongPart(std::shared_ptr<const SongData> songData, int amountOfClusters, int inputSize, const int amountOfGroups)
+	{
+		std::vector<std::vector<float>> fft = calculateFft(songData, inputSize, amountOfGroups);
+
+		std::unique_ptr<SongPartData> songPartDataLocal = std::make_unique<SongPartData>();
+
+		songPartDataLocal->dataL1 = cluster(fft, 0, fft.size(), amountOfClusters, inputSize, amountOfGroups);
+
+		cleanSongPart(songPartDataLocal, amountOfClusters);
+
+		int last = songPartDataLocal->dataL1[0];
+		int lastIndex = 0;
+		for (int i = 1; i < songPartDataLocal->dataL1.size(); i++)
+		{
+			if (songPartDataLocal->dataL1[i] != last)
+			{
+				std::vector<int> c = cluster(fft, lastIndex, i, std::min(amountOfClusters, i - lastIndex), inputSize, amountOfGroups);
+				songPartDataLocal->dataL2.insert(songPartDataLocal->dataL2.end(), c.begin(), c.end());
+				last = songPartDataLocal->dataL1[i];
+				lastIndex = i;
+			}
+		}
+		std::vector<int> c = cluster(fft, lastIndex, songPartDataLocal->dataL1.size(), std::min(amountOfClusters, int(songPartDataLocal->dataL1.size() - lastIndex)), inputSize, amountOfGroups);
+		songPartDataLocal->dataL2.insert(songPartDataLocal->dataL2.end(), c.begin(), c.end());
+
+		return std::move(songPartDataLocal);
+	}
+
+	std::unique_ptr<LightShow> calculateLightShow(std::shared_ptr<const SongData> songData, std::shared_ptr<const SongPartData> songPartData)
+	{
+		std::unique_ptr<LightShow> lightShow = std::make_unique<LightShow>();
+
+		for (int i = 0; i < songPartData->dataL2.size(); i++)
+		{
+			for (int j = 0; j < 5; j++)
+			{
+				lightShow->addEffect(j, std::make_shared<LightEffectFlash>(float(songData->beat[i]) / SAMPLE_RATE, niceColors[songPartData->dataL2[i]], 0.3, 0.1, 0.3));
+			}
+		}
+
+		return std::move(lightShow);
 	}
 
 	void worker()
 	{
 		std::shared_ptr<const SongData> songData;
-		std::unique_ptr<SongPartData> songPartDataLocal;
 		while (!stop)
 		{
 			if (scheduled && !inProgress)
@@ -215,18 +282,18 @@ private:
 				{
 					scheduled = false;
 					inProgress = true;
-
-					songPartDataLocal = std::make_unique<SongPartData>();
 				}
 			}
 			if (inProgress)
 			{
 				int n = amountOfClusters;
-				songPartDataLocal->data = calculateSongPart(songData, n);
-				cleanSongPart(songPartDataLocal, n);
-
-				songPartData = std::move(songPartDataLocal);
+				std::shared_ptr<const SongPartData> songPartData = calculateSongPart(songData, n, SAMPLE_RATE, 12);
 				showPlot->setSongPartData(songData, songPartData);
+				mediaPlayer->setSongData(songData, songPartData);
+
+				std::shared_ptr<LightShow> lightShow = calculateLightShow(songData, songPartData);
+				mediaPlayer->setLightShow(lightShow);
+
 				inProgress = false;
 			}
 			else
@@ -243,7 +310,6 @@ private:
 	bool stop = false;
 	bool inProgress = false;
 	bool scheduled = false;
-	int amountOfClusters = 4;
-	std::shared_ptr<const SongPartData> songPartData;
+	int amountOfClusters = 6;
 	ShowPlot* showPlot;
 };

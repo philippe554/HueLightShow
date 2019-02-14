@@ -31,6 +31,11 @@ namespace GLib
 		mouseFunctions[type] = f;
 	}
 
+	std::pair<int, int> View::getMousePosition()
+	{
+		return std::pair<int, int>(mouseX, mouseY);
+	}
+
 	void View::renderControl(RT * rt, Writer* w, Color* c, int x, int y, D2D1_RECT_F& visibleRect)
 	{
 		if (activateFlag && renderFlag)
@@ -97,8 +102,18 @@ namespace GLib
 		}
 	}
 
+	View * View::getParentView()
+	{
+		return parentView;
+	}
+
 	void View::forwardMouseEvent(int type, int x, int y)
 	{
+		if (type == WM_MOUSEMOVE)
+		{
+			mouseX = x;
+			mouseY = y;
+		}
 		if (activateFlag && mouseEventFlag)
 		{
 			if (mouseFunctions.count(type) > 0)

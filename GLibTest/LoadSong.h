@@ -1,24 +1,14 @@
 #pragma once
 
+#include <filesystem>
+
 #include "GLib.h"
 
 #include "SongData.h"
 #include "MediaPlayer.h"
 
 using namespace GLib;
-
-std::vector<std::pair<std::string, std::string>> getPossibleFiles()
-{
-	std::vector<std::pair<std::string, std::string>> data = {
-		{"Heaven", "C:\\dev\\data\\avicii.mp3"},
-		{"Waiting for love", "C:\\dev\\data\\waiting.mp3"},
-		{"Don Diablo", "C:\\dev\\data\\dondiablo.mp3"},
-		{"Spons Sessions 51", "C:\\dev\\data\\spons.mp3"},
-		{"House Mix", "C:\\dev\\data\\deepmix1.mp3"}
-	};
-
-	return data;
-}
+namespace fs = std::filesystem;
 
 class LoadSong : public View
 {
@@ -26,17 +16,22 @@ public:
 	using View::View;
 	void init(MediaPlayer* mp)
 	{
-		std::vector<std::pair<std::string, std::string>> files = getPossibleFiles();
+		auto selectList = addView<MovingView>(0, 0, 510, -1, false, true);
 
-		auto selectList = addView<MovingView>(0, 0, 310, -1, false, true);
-
-		for (int i = 0; i < files.size(); i++)
+		std::string path = "./";
+		int i = 0;
+		for (const auto & entry : fs::directory_iterator(path))
 		{
-			selectList->addView<Button>(20, 20 + i * 60, 250, 40, [file = files[i].second, &nextFile = nextFile, &m = workerMutex]()
+			if (entry.path().extension().generic_string() == ".mp3")
 			{
-				std::unique_lock<std::mutex> lock(m);
-				nextFile = file;
-			}, "  " + files[i].first);
+				selectList->addView<Button>(20, 20 + i * 60, 450, 40, [file = entry.path(), &nextFile = nextFile, &m = workerMutex]()
+				{
+					std::unique_lock<std::mutex> lock(m);
+					nextFile = file.generic_string();
+				}, "  " + entry.path().filename().generic_string());
+				i++;
+			}
+	
 		}
 
 		mediaPlayer = mp;
@@ -55,7 +50,7 @@ public:
 	{
 		if (inProgress)
 		{
-			w->print("Loading...", c->get(C::Black), w->get(20), {330, 20, 500, 60});
+			w->print("Loading...", c->get(C::Black), w->get(20), {530, 20, 700, 60});
 		}
 	}
 
@@ -93,7 +88,7 @@ private:
 				nextFile = "";
 				workerMutex.unlock();
 
-				mediaPlayer->setSongData(nullptr);
+				mediaPlayer->setSongData(nullptr, nullptr);
 
 				if (inProgress)
 				{
@@ -155,12 +150,31 @@ private:
 					}
 					else
 					{
-						mediaPlayer->setSongData(std::move(songData));
-						inProgress = false;
-						Aubio::del_aubio_tempo(o);
-						mpg123_close(mh);
-						phase = 0;
+						phase = 2;
 					}
+				}
+				if (phase == 2)
+				{
+					for (int i = 0; i < songData->beat.size(); i++)
+					{
+						float sum = 0;
+						int end = i + 1 == songData->beat.size() ? songData->data.size() - 1 : songData->beat[i + 1];
+						for (int j = songData->beat[i]; j < end; j++)
+						{
+							sum += 0.5 * (songData->data[j].first * songData->data[j].first
+								+ songData->data[j].second * songData->data[j].second);
+						}
+						songData->beatEnergy.push_back(std::sqrt(sum / (end - songData->beat[i])));
+					}
+					phase = 3;
+				}
+				if (phase == 3)
+				{
+					mediaPlayer->setSongData(std::move(songData), nullptr);
+					inProgress = false;
+					Aubio::del_aubio_tempo(o);
+					mpg123_close(mh);
+					phase = 0;
 				}
 			}
 			else
