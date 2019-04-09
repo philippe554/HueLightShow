@@ -1,0 +1,21 @@
+Hue
+
+{"devicetype":"test_conn"}
+ZH25ws2k82pWeBD2LHzro30gf-iOX1etNrccrQyi
+
+
+
+
+{
+    "devicetype":"test_conn",
+    "generateclientkey":true
+}
+
+[
+	{
+		"success": {
+			"username": "Gl4AsrYSHlDx3mBxFDDfIvVxEFH22dVKxZ6xXfcr",
+			"clientkey": "496C432C6171944976E29F6790408ADB"
+		}
+	}
+]

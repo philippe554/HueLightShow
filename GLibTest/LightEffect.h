@@ -3,23 +3,11 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <map>
 
-struct LightColor
-{
-public:
-	LightColor(float r, float g, float b)
-	{
-		red = r;
-		green = g;
-		blue = b;
-	}
+#include "Pattern.h"
 
-	float red;
-	float green;
-	float blue;
-};
-
-class LightEffect
+/*class LightEffect
 {
 public:
 	LightEffect(float t)
@@ -34,9 +22,9 @@ public:
 
 protected:
 	float time;
-};
+};*/
 
-class LightEffectFlash : public LightEffect
+/*class LightEffectFlash : public LightEffect
 {
 public:
 	LightEffectFlash(float t, LightColor c, float fi = 0.1, float h = 0.1, float fo = 0.5) : LightEffect(t), color(c)
@@ -85,15 +73,19 @@ private:
 	float fadeIn;
 	float high;
 	float fadeOut;
-};
+};*/
 
 class LightShow
 {
 public:
-	void addEffect(int id, std::shared_ptr<LightEffect> e)
+	LightShow(std::vector<std::shared_ptr<Pattern>> _patterns)
+	{
+		patterns = _patterns;
+	}
+	/*void addEffect(int id, std::shared_ptr<LightEffect> e)
 	{
 		effects.emplace_back(id, e);
-	}
+	}*/
 
 	void setTime(float t)
 	{
@@ -103,6 +95,34 @@ public:
 	}
 
 	LightColor getState(int id)
+	{
+		dataMutex.lock();
+		float timeCopy = time;
+		dataMutex.unlock();
+
+		LightColor color = LightColor(1, 1, 1);
+
+		for (auto p : patterns)
+		{
+			if (p->inside(timeCopy))
+			{
+				color = p->get(timeCopy);
+			}
+		}
+
+		dataMutex.lock();
+		lastColors[id] = color;
+		dataMutex.unlock();
+
+		return color;
+	}
+
+	const std::map<int, LightColor>& getLastColors()
+	{
+		return lastColors;
+	}
+
+	/*LightColor getState(int id)
 	{
 		dataMutex.lock();
 		float timeCopy = time;
@@ -120,15 +140,18 @@ public:
 			}
 		}
 		return color;
-	}
+	}*/
 
-	int getAmountOfEffects()
+	/*int getAmountOfEffects()
 	{
 		return effects.size();
-	}
+	}*/
 
 private:
-	std::vector<std::pair<int, std::shared_ptr<LightEffect>>> effects;
+	//std::vector<std::pair<int, std::shared_ptr<LightEffect>>> effects;
+	std::vector<std::shared_ptr<Pattern>> patterns;
 	float time;
 	std::mutex dataMutex;
+
+	std::map<int, LightColor> lastColors;
 };

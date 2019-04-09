@@ -189,6 +189,15 @@ public:
 		lightShow = lg;
 	}
 
+	void setplayShow(bool _playShow)
+	{
+		playShow = _playShow;
+	}
+	bool isPlayShow()
+	{
+		return playShow;
+	}
+
 	void startEntertainmentMode(int id)
 	{
 		entertainmentGroup = id;
@@ -236,15 +245,15 @@ private:
 		int i = 0;
 		for (const auto& light : group.lights)
 		{
-			LightColor color = lightShow ? lightShow->getState(i) : LightColor(1, 1, 1);
+			LightColor color = lightShow && playShow ? lightShow->getState(i) : LightColor(1, 1, 1);
 
 			data.push_back(0x00);
 			data.push_back((light.id >> 8) & 0xff);
 			data.push_back(light.id & 0xff);
 			
-			short red = color.red * 0xffff;
-			short green = color.green * 0xffff;
-			short blue = color.blue * 0xffff;
+			int red = color.red * 0xffff;
+			int green = color.green * 0xffff;
+			int blue = color.blue * 0xffff;
 
 			data.push_back((red >> 8) & 0xff);
 			data.push_back(red & 0xff);
@@ -322,6 +331,8 @@ private:
 
 			GLib::Out << "Handshake complete\n";
 
+			auto start = std::chrono::steady_clock::now();
+			int updates = 0;
 			while (!stop)
 			{
 				std::vector<unsigned char> msg = getEntertainmentData();
@@ -330,7 +341,16 @@ private:
 				do status = mbedtls_ssl_write(&ssl, msg.data(), msg.size());
 				while (status == MBEDTLS_ERR_SSL_WANT_READ || status == MBEDTLS_ERR_SSL_WANT_WRITE);
 
-				std::this_thread::sleep_for(std::chrono::milliseconds(30));
+				updates++;
+
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+				float millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+				
+				if (updates % 100 == 0)
+				{
+					GLib::Out << int(float(updates) * 1000.0 / millis) << " light updates per second \n";
+				}
 			}
 
 			/*if (ret < 0)
@@ -387,5 +407,6 @@ private:
 
 	int entertainmentGroup = -1;
 
+	bool playShow = true;
 	std::shared_ptr<LightShow> lightShow;
 };

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\pattern">
+      <UniqueIdentifier>{b8aa0935-a898-4d16-ace1-81528b6cf941}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -44,5 +47,34 @@
     <ClInclude Include="ShowPlot.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Pattern.h">
+      <Filter>Source Files\pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternParser.h">
+      <Filter>Source Files\pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternStatic.h">
+      <Filter>Source Files\pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternFade.h">
+      <Filter>Source Files\pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternGlow.h">
+      <Filter>Source Files\pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternBeat.h">
+      <Filter>Source Files\pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternEnergy.h">
+      <Filter>Source Files\pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternStrobe.h">
+      <Filter>Source Files\pattern</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data.lsh">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

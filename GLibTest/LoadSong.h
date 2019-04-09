@@ -166,9 +166,25 @@ private:
 						}
 						songData->beatEnergy.push_back(std::sqrt(sum / (end - songData->beat[i])));
 					}
+
 					phase = 3;
 				}
 				if (phase == 3)
+				{
+					songData->energyRate = songData->sampleRate / 10;
+					for (long i = 0; i + songData->energyRate < songData->data.size(); i += songData->energyRate)
+					{
+						float sum = 0;
+						for (int j = 0; j < songData->energyRate; j++)
+						{
+							sum += 0.5 * (songData->data[i + j].first * songData->data[i + j].first
+								+ songData->data[i + j].second * songData->data[i + j].second);
+						}
+						songData->energy.push_back(std::sqrt(sum / songData->energyRate));
+					}
+					phase = 4;
+				}
+				if (phase == 4)
 				{
 					mediaPlayer->setSongData(std::move(songData), nullptr);
 					inProgress = false;

@@ -6,6 +6,9 @@
 #include "MediaPlayer.h"
 #include "ShowPlot.h"
 
+#include "Pattern.h"
+#include "PatternParser.h"
+
 using namespace GLib;
 
 std::vector<LightColor> niceColors =
@@ -73,15 +76,15 @@ public:
 		{
 			std::unique_lock<std::mutex> lock(m);
 			scheduled = true;
-		}, "  Create");
+		}, "  Load");
 
-		addView<Button>(400, 60, 20, 40, []() {})->setHorizontalDragable(400, 500, [&](float ratio) {amountOfClusters = (ratio * 5) + 1; });
+		//addView<Button>(400, 60, 20, 40, []() {})->setHorizontalDragable(400, 500, [&](float ratio) {amountOfClusters = (ratio * 5) + 1; });
 
-		MovingView* movingView = addView<GLib::MovingView>(0, 200, -1, 120, true, false);
+		/*MovingView* movingView = addView<GLib::MovingView>(0, 200, -1, 120, true, false);
 		movingView->setScrollZoom(true, false);
 
 		View* movingSoundPlot = movingView->getMovingView();
-		showPlot = movingSoundPlot->addView<ShowPlot>();
+		showPlot = movingSoundPlot->addView<ShowPlot>();*/
 
 		mediaPlayer = mp;
 
@@ -106,7 +109,7 @@ public:
 			w->print("Scheduled...", c->get(C::Black), w->get(20), { 330, 20, 500, 60 });
 		}
 
-		w->print(std::to_string(amountOfClusters), c->get(C::Black), w->get(20), { 330, 60, 500, 100 });
+		//w->print(std::to_string(amountOfClusters), c->get(C::Black), w->get(20), { 330, 60, 500, 100 });
 	}
 
 private:
@@ -256,17 +259,75 @@ private:
 
 	std::unique_ptr<LightShow> calculateLightShow(std::shared_ptr<const SongData> songData, std::shared_ptr<const SongPartData> songPartData)
 	{
-		std::unique_ptr<LightShow> lightShow = std::make_unique<LightShow>();
+		//std::unique_ptr<LightShow> lightShow = std::make_unique<LightShow>();
 
+		int lastLight = 0;
 		for (int i = 0; i < songPartData->dataL2.size(); i++)
 		{
+			float c = (0.5 - songData->beatConfidence[i]) / 4.0;
+			c = c < 0 ? 0 : c;
+
 			for (int j = 0; j < 5; j++)
 			{
-				lightShow->addEffect(j, std::make_shared<LightEffectFlash>(float(songData->beat[i]) / SAMPLE_RATE, niceColors[songPartData->dataL2[i]], 0.3, 0.1, 0.3));
+				//lightShow->addEffect(j, std::make_shared<LightEffectFlash>(float(songData->beat[i]) / SAMPLE_RATE, niceColors[songPartData->dataL2[i]], c, 0.05, 0.1 + c));
 			}
+			/*if (i % 2 == 0)
+			{
+				lightShow->addEffect(0, std::make_shared<LightEffectFlash>(float(songData->beat[i]) / SAMPLE_RATE, LightColor(1, 1, 1), 0.5 + c, 10.0, 0.5 + c));
+			}
+			else
+			{
+				lightShow->addEffect(3, std::make_shared<LightEffectFlash>(float(songData->beat[i]) / SAMPLE_RATE, LightColor(1, 1, 1), 0.5 + c, 10.0, 0.5 + c));
+			}
+
+			std::vector<int> effectLights{ 1, 2, 4 };
+
+			int same = 1;
+			for (int j = 1; j <= 4; j++)
+			{
+				if (i + j >= 0 && songPartData->dataL2[i] == songPartData->dataL2[i - j])
+				{
+					same++;
+				}
+				else
+				{
+					break;
+				}
+			}
+			for (int j = 1; j <= 4; j++)
+			{
+				if (i + j < songPartData->dataL2.size() && songPartData->dataL2[i] == songPartData->dataL2[i + j])
+				{
+					same++;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			if (same < 5)
+			{
+				std::random_device rd;
+				std::mt19937 eng(rd());
+				std::uniform_int_distribution<> distr1(0, effectLights.size() - 1);
+				std::uniform_int_distribution<> distr2(0, 1);
+
+				int light = lastLight;
+				while (light == lastLight)
+				{
+					light = effectLights[distr1(eng)];
+				}
+				lastLight = light;
+
+				//if (distr2(eng) == 0)
+				{
+					lightShow->addEffect(light, std::make_shared<LightEffectFlash>(float(songData->beat[i]) / SAMPLE_RATE, niceColors[songPartData->dataL2[i]], c, 0.05, 0.1 + c));
+				}
+			}*/
 		}
 
-		return std::move(lightShow);
+		//return std::move(lightShow);
 	}
 
 	void worker()
@@ -286,12 +347,23 @@ private:
 			}
 			if (inProgress)
 			{
-				int n = amountOfClusters;
+				/*int n = amountOfClusters;
 				std::shared_ptr<const SongPartData> songPartData = calculateSongPart(songData, n, SAMPLE_RATE, 12);
 				showPlot->setSongPartData(songData, songPartData);
 				mediaPlayer->setSongData(songData, songPartData);
 
 				std::shared_ptr<LightShow> lightShow = calculateLightShow(songData, songPartData);
+				mediaPlayer->setLightShow(lightShow);*/
+
+				PatternParser pp;
+				pp.setSongData(songData);
+				pp.parseFile("data.lsh");
+				std::vector<std::shared_ptr<Pattern>> patterns = pp.get();
+
+				GLib::Out << "Show loaded, " << patterns.size() << " patterns.\n";
+
+				std::shared_ptr<LightShow> lightShow = std::make_shared<LightShow>(patterns);
+
 				mediaPlayer->setLightShow(lightShow);
 
 				inProgress = false;
@@ -311,5 +383,5 @@ private:
 	bool inProgress = false;
 	bool scheduled = false;
 	int amountOfClusters = 6;
-	ShowPlot* showPlot;
+	//ShowPlot* showPlot;
 };

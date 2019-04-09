@@ -51,7 +51,24 @@ public:
 		addView<Button>(10, 10, 100, 50, [this]()
 		{
 			this->play = !this->play;
-		}, "Play");
+		}, " Play");
+
+		addView<Button>(10, int(place.bottom - place.top - 200 - 90), int(place.right - place.left - 20), 80, [this]()
+		{
+			if (!hue)
+			{
+				hue = std::make_unique<Hue>("192.168.178.12", "Gl4AsrYSHlDx3mBxFDDfIvVxEFH22dVKxZ6xXfcr", "496C432C6171944976E29F6790408ADB");
+				hue->startEntertainmentMode(hue->getFirstEntertainmentGroup());
+				if (lightShow)
+				{
+					hue->setLightShow(lightShow);
+				}
+			}
+			else
+			{
+				hue->setplayShow(!hue->isPlayShow());
+			}
+		}, " Hue Play/Pause");
 
 		addMouseListener(WM_LBUTTONDOWN, [&](int x, int y)
 		{
@@ -64,14 +81,11 @@ public:
 			}
 		});
 
-		MovingView* movingView = addView<GLib::MovingView>(0, 200, -1, 120, true, false);
+		MovingView* movingView = addView<GLib::MovingView>(0, 200, -1, 100, true, false);
 		movingView->setScrollZoom(true, false);
 
 		View* movingSoundPlot = movingView->getMovingView();
 		showPlot = movingSoundPlot->addView<ShowPlot>();
-
-		//hue = std::make_unique<Hue>("192.168.178.12", "Gl4AsrYSHlDx3mBxFDDfIvVxEFH22dVKxZ6xXfcr", "496C432C6171944976E29F6790408ADB");
-		//hue->startEntertainmentMode(hue->getFirstEntertainmentGroup());
 	}
 
 	~MediaPlayer()
@@ -91,6 +105,13 @@ public:
 
 			D2D1_RECT_F songDone = { songScrubBar.left, songScrubBar.top, songScrubBar.left + (songScrubBar.right - songScrubBar.left) * percentageDone, songScrubBar.bottom };
 			rt->FillRectangle(songDone, c->get(C::Red));
+
+			int seconds = location / songData->sampleRate;
+			int minutes = seconds / 60;
+			seconds -= minutes * 60;
+
+			D2D1_RECT_F songLocation = { 10, 60, 100, 110};
+			w->print(std::to_string(minutes) + ":" + std::to_string(seconds), c->get(C::Black), w->get(30), songLocation);
 		}
 
 		/*int middle = (songScrubBar.bottom + songScrubBar.top) * 0.5;
@@ -101,6 +122,37 @@ public:
 			D2D1_RECT_F e = { from, middle - energy[i] * 100, to, middle + energy[i] * 100 };
 			rt->FillRectangle(e, c->get(C::LightGray));
 		}*/
+
+		if (lightShow)
+		{
+			if (hue && hue->isPlayShow())
+			{
+				const auto& colors = lightShow->getLastColors();
+				float size = (place.right - place.left) / colors.size();
+
+				for (const auto& color : colors)
+				{
+					D2D1_RECT_F box = { color.first * size, place.bottom - place.top - 200, size + color.first * size, place.bottom - place.top };
+					rt->FillRectangle(box, c->get(C::Black));
+					D2D1_RECT_F light = { color.first * size + 10, place.bottom - place.top - 200 + 10, size + color.first * size - 10, place.bottom - place.top - 10 };
+					rt->FillRectangle(light, c->get(color.second.red * 255, color.second.green * 255, color.second.blue * 255));
+				}
+			}
+			else
+			{
+				int amount = 5;
+				float size = (place.right - place.left) / amount;
+				for (int i = 0; i < amount; i++)
+				{
+					auto color = lightShow->getState(i);
+
+					D2D1_RECT_F box = { i * size, place.bottom - place.top - 200, size + i * size, place.bottom - place.top };
+					rt->FillRectangle(box, c->get(C::Black));
+					D2D1_RECT_F light = { i * size + 10, place.bottom - place.top - 200 + 10, size + i * size - 10, place.bottom - place.top - 10 };
+					rt->FillRectangle(light, c->get(color.red * 255, color.green * 255, color.blue * 255));
+				}
+			}
+		}
 	}
 	void update()
 	{
