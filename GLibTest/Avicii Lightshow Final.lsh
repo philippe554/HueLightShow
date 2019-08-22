@@ -1,0 +1,430 @@
+color white #ffffff
+color red #ff0000
+color green #00ff00
+color blue #0000ff
+color pink #ff00d0
+color yellow #ffd000
+color cyan #00ffff
+color orange #fb5b1f
+color heavenblue #4EBFFF
+color cumblue #0303ff
+color limoengeel #ffff00
+
+group all(1,2,3,4,6,7) default
+group ceiling(1,4)
+group wall(2,3,6,7)
+group left(2,3)
+group right(6,7)
+
+song 00.00.000 Nadia Ali - Rapture (Avicii Remix)
+00.00.000 00.03.690 fade(off,yellow) 
+00.03.690 00.18.540 glow(yellow(100),yellow(50),2)
+00.18.540 00.19.000 static(yellow)
+00.19.000 00.48.080 glow(yellow(100),yellow(50),1)
+00.48.080 01.17.080 fade(yellow(50),yellow(100))
+01.17.080 01.17.620 strobe(white)
+01.17.620 02.09.310 group(ceiling) beat(yellow(100),3,0)
+01.17.620 02.09.310 group(left) beat(yellow(100),3,1)
+01.17.620 02.09.310 group(right) beat(yellow(100),3,2)
+02.09.310 02.24.070 fade(yellow(100),off)
+
+song 02.24.070 Leona Lewis - Collide (Avicii Remix)
+02.24.070 02.31.380 fade(pink(100),pink(50)) 
+02.31.380 02.53.610 fade(pink(50),pink(100))
+02.53.610 03.23.020 group(left) beat(pink(100),2,0)
+02.53.610 03.23.020 group(right) beat(pink(100),2,1)
+03.23.020 03.30.520 group(wall) fade(pink(100),pink(50))
+03.30.520 03.52.660 group(wall) fade(pink(50),pink(100))
+
+song 03.52.660 Avicii - Fade Into Darkness
+03.52.660 04.30.760 beat(#7402ff)
+
+song 04.30.760 Avicii - Levels (Old School Intro)
+04.30.760 04.37.100 fade(cyan(100),cyan(30)) 
+04.37.100 04.50.540 fade(cyan(100),cyan(30))
+04.50.540 04.58.630 fade(cyan(100),cyan(30))
+04.58.630 05.06.060 fade(cyan(30),cyan(100))
+
+song 05.06.060 Avicii - Levels In Reverze
+05.06.060 06.21.070 beat(red(100),2) 
+06.21.070 06.28.560 fade(red(100),red(40))
+06.28.560 07.28.570 glow(red(40),red(100),1)
+07.28.570 07.43.560 fade(red(40),red(100))
+
+song 07.43.560 Avicii - Levels
+07.43.560 07.58.380 glow(#ff0051(100),#ff0051(50),1)
+07.58.380 08.43.570 group(ceiling) beat(#ff0051(100),3,0)
+07.58.380 08.43.570 group(left) beat(#ff0051(100),3,1)
+07.58.380 08.43.570 group(right) beat(#ff0051(100),3,2)
+08.43.570 08.47.310 fade(#ff0051(100),#ff0051(30))
+
+song 08.47.310 Tom Hangs & Shermanology - Blessed (Avicii Remix)
+08.47.310 09.13.980 glow(green(50),green(100),2)
+09.13.980 09.17.780 glow(green(50),green(100),1)
+09.17.780 09.48.240 group(left) beat(green(100),2,0)
+09.17.780 09.48.240 group(right) beat(green(100),2,1)
+09.48.240 09.52.070 group(wall) fade(green(100),off)
+
+song 09.52.070 Avicii - Silhouettes
+09.52.070 10.28.640 glow(cumblue(100),cumblue(50),1)
+10.28.640 10.29.560 static(off)
+10.29.560 10.31.440 group(wall) static(limoengeel(100))
+10.31.440 10.33.320 group(ceiling) static(cumblue(100))
+10.33.320 10.35.190 group(wall) static(red(100))
+10.35.190 10.37.090 group(ceiling) static(limoengeel(100))
+10.37.090 10.38.890 group(wall) static(cumblue(100))
+10.38.890 10.44.560 group(ceiling) fade(red(100),red(30))
+10.44.560 11.14.560 group(ceiling) beat(limoengeel(100),3,0)
+10.44.560 11.14.560 group(left) beat(limoengeel(100),3,1)
+10.44.560 11.14.560 group(right) beat(limoengeel(100),3,2)
+
+song 11.14.560 Avicii - Superlove
+11.14.560 11.37.030 fade(limoengeel(100),limoengeel(0))
+11.37.030 11.52.040 group(ceiling) beat(white(100),4,1)
+11.37.030 11.52.040 group(wall) beat(white(100),4,3)
+11.52.040 11.59.530 glow(white(100),white(40),1)
+11.59.530 12.14.540 beat(white(100),2)
+12.14.540 12.44.530 group(left) glow(white(100),white(40),1)
+12.14.540 12.44.530 group(right) glow(white(40),white(100),1)
+12.44.530 13.14.540 group(ceiling) beat(white(100),3,0)
+12.44.530 13.14.540 group(left) beat(white(100),3,1)
+12.44.530 13.14.540 group(right) beat(white(100),3,2)
+13.14.540 13.31.310 fade(white(100),white(20))
+
+song 13.31.310 Avicii vs Nicky Romero - I Could Be The One
+13.31.310 14.23.810 glow(#ff0303(50),#ff0303(100),2)
+14.23.810 15.08.810 group(left) beat(#ff0303(100),2,0)
+14.23.810 15.08.810 group(right) beat(#ff0303(100),2,1)
+15.08.810 15.12.010 group(wall) fade(#ff0303(100),#ff0303(30))
+
+song 15.12.010 Madonna - Girl Gone Wild (Avicii Remix)
+15.12.010 15.41.110 glow(#ff01fb(100),#ff01fb(40),1)
+15.41.110 15.55.650 fade(#ff01fb(100),off)
+15.55.650 15.57.470 static(#ff01fb(100))
+15.57.470 15.59.300 group(ceiling) static(#ff01fb(100))
+15.59.300 16.01.12 group(wall) static(#ff01fb(100))
+16.01.120 16.02.930 group(ceiling) static(#ff01fb(100))
+16.02.930 16.04.750 group(wall) static(#ff01fb(100))
+16.04.750 16.06.570 group(ceiling) static(#ff01fb(100))
+16.06.570 16.08.380 group(wall) static(#ff01fb(100))
+16.08.380 16.09.550 group(ceiling) static(#ff01fb(100))
+16.09.550 16.10.190 strobe(white)
+16.10.190 16.24.740 beat(#ff01fb(100))
+16.24.740 16.35.630 glow(#ff01fb(100),#ff01fb(40),1)
+16.35.630 16.39.280 fade(#ff01fb(100),#ff01fb(0))
+16.39.280 17.01.110 group(ceiling) beat(#ff01fb(100),3,0)
+16.39.280 17.01.110 group(left) beat(#ff01fb(100),3,1)
+16.39.280 17.01.110 group(right) beat(#ff01fb(100),3,2)
+17.01.110 17.12.240 fade(#ff01fb(100),#ff01fb(0))
+
+song 17.12.240 Avicii - UMF
+17.12.240 17.49.750 glow(#0381ff(40),#0381ff(80),1)
+17.49.750 17.53.540 static(#0381ff(100))
+17.53.540 17.57.240 group(ceiling) static(#0381ff(100))
+17.57.240 18.01.110 group(wall) static(#0381ff(100))
+18.01.110 18.04.740 group(ceiling) fade(#0381ff(100),#0381ff(0))
+18.04.740 18.34.750 beat(#0381ff(100),2)
+
+song 18.34.750 David Guetta & Avicii - Sunshine
+color sunyellow #f2ff00
+18.34.750 18.42.250 fade(#0381ff(100),#0381ff(0))
+18.42.250 18.49.750 fade(sunyellow(0),sunyellow(100))
+18.49.750 19.19.760 glow(sunyellow(100),sunyellow(40),2)
+19.19.760 19.23.500 static(sunyellow(100))
+19.23.500 19.27.250 group(ceiling) static(sunyellow(100))
+19.27.250 19.31.000 group(wall) static(sunyellow(100))
+19.31.000 19.49.750 fade(sunyellow(100),sunyellow(0))
+19.49.750 20.27.230 group(ceiling) beat(sunyellow(100),2,0)
+19.49.750 20.27.230 group(wall) beat(sunyellow(100),2,1)
+20.27.230 20.34.760 fade(sunyellow(100),sunyellow(0))
+
+song 20.34.760 Avicii - X You
+20.34.760 20.42.380 fade(#ff7300(100),#ff7300(40))
+20.42.380 21.35.240 glow(#ff7300(40),#ff7300(100),1)
+21.35.240 21.35.710 static(off)
+21.35.710 21.35.900 static(#ff7300)
+21.35.900 22.04.290 group(ceiling) beat(#ff7300(100),3,0)
+21.35.900 22.04.290 group(left) beat(#ff7300(100),3,1)
+21.35.900 22.04.290 group(right) beat(#ff7300(100),3,2)
+22.04.290 22.06.190 fade(#ff7300(100),off)
+
+song 22.06.190 Avicii - Wake Me Up
+22.06.190 23.29.160 group(wall) glow(red(100),red(40),2)
+23.29.160 23.31.100 group(wall) fade(red(40),red(100))
+23.31.100 24.02.060 group(left) beat(red(100),2,0)
+23.31.100 24.02.060 group(right) beat(red(100),2,1)
+24.02.060 24.04.240 group(wall) fade(red(100),red(0))
+
+song 24.04.240 Avicii - You Make Me
+24.04.240 25.17.180 group(left) glow(#c05bff(100),#c05bff(40),1)
+24.04.240 25.17.180 group(right) glow(#c05bff(40),#c05bff(100),1)
+25.17.180 25.21.030 group(wall) fade(#c05bff(100),#c05bff(00))
+25.21.030 25.51.690 group(wall) beat(#c05bff(100),2,0)
+25.21.030 25.51.690 group(ceiling) beat(#c05bff(100),2,1)
+25.51.690 25.56.130 fade(#c05bff(100),off)
+
+song 25.56.130 Avicii - You Make Me (Throttle Remix)
+25.56.130 26.26.610 glow(#5dff51(40),#5dff51(100),2)
+26.26.610 26.32.330 fade(#5dff51(40),#5dff51(100))
+26.32.330 26.34.230 fade(#5dff51(100),#5dff51(0))
+26.34.230 27.04.690 group(ceiling) beat(#5dff51(100),2,0)
+26.34.230 27.04.690 group(wall) beat(#5dff51(100),2,1)
+27.04.690 27.12.330 fade(#5dff51(100),#5dff51(10))
+27.12.330 27.19.940 fade(#5dff51(10),#5dff51(100))
+27.19.940 27.35.180 beat(#5dff51(100),2)
+27.35.180 27.39.050 fade(#5dff51(100),#5dff51(30))
+
+song 27.39.050 Avicii - Dear Boy
+27.39.050 28.40.500 glow(#ff5e53(100),#ff5e53(50),1)
+28.40.500 28.55.880 group(wall) glow(#ff5e53(50),#ff5e53(100),2)
+28.40.500 28.55.880 group(ceiling) glow(#ff5e53(100),#ff5e53(50),2)
+28.55.880 29.26.570 group(ceiling) glow(#ff5e53(100),#ff5e53(50),1)
+28.55.880 29.26.570 group(wall) glow(#ff5e53(50),#ff5e53(100),1)
+29.26.570 30.47.210 group(ceiling) beat(#ff5e53(100),3,0)
+29.26.570 30.47.210 group(left) beat(#ff5e53(100),3,1)
+29.26.570 30.47.210 group(right) beat(#ff5e53(100),3,2)
+
+song 30.47.210 Avicii - Dear Boy (Avicii by Avicii)
+30.47.210 31.03.910 fade(#ff8000(100),#ff8000(50))
+31.03.910 31.35.220 glow(#ff8000(100),#ff8000(50),1)
+31.35.220 31.37.300 fade(#ff8000(100),#ff8000(0))
+31.37.300 32.27.390 group(ceiling) beat(#ff8000(100),3,0)
+31.37.300 32.27.390 group(left) beat(#ff8000(100),3,1)
+31.37.300 32.27.390 group(right) beat(#ff8000(100),3,2)
+32.27.390 32.32.960 fade(#ff8000(100),#ff8000(20))
+
+song 32.32.960 Avicii - Shame On Me
+32.32.960 32.51.910 fade(#b302ff(20),#b302ff(100))
+32.51.910 33.22.550 group(ceiling) glow(#b302ff(100),#b302ff(50),2)
+32.51.910 33.22.550 group(wall) glow(#b302ff(50),#b302ff(100),2)
+33.22.550 33.51.050 group(ceiling) glow(#b302ff(100),#b302ff(50),1)
+33.22.550 33.51.050 group(wall) glow(#b302ff(50),#b302ff(100),1)
+33.51.050 33.52.950 fade(#b302ff(100),#b302ff(0))
+33.52.950 34.08.200 beat(#b302ff(100),2)
+34.08.200 34.19.550 fade(#b302ff(100),off)
+
+song 34.19.550 Avicii - Liar Liar
+34.19.550 34.21.490 group(ceiling) static(#0bc202(100))
+34.21.490 34.23.380 group(wall) static(white(100))
+34.23.380 34.25.260 group(ceiling) static(#ff4586(100))
+34.25.260 34.27.180 group(wall) static(#0bc202(100))
+34.27.180 34.29.170 group(ceiling) static(white(100))
+34.29.170 34.31.090 group(wall) static(#ff4586(100))
+34.31.090 34.32.040 group(ceiling) static(#0bc202(100))
+34.32.040 34.32.760 group(wall) static(white(100))
+34.32.760 34.34.910 fade(#ff4586(100),#ff4586(0))
+34.34.910 35.21.010 glow(#ff4586(50),#ff4586(100),1)
+35.21.010 35.28.660 fade(#ff4586(100),#ff4586(0))
+
+song 35.27.920 Avicii - Liar Liar (Avicii by Avicii)
+35.28.660 35.41.660 glow(#0bc202(100),#0bc202(50),1)
+35.41.660 35.43.420 fade(#0bc202(100),#0bc202(0))
+35.43.630 36.26.750 group(ceiling) beat(#0bc202(100),3,0)
+35.43.630 36.26.750 group(left) beat(#0bc202(100),3,1)
+35.43.630 36.26.750 group(right) beat(#0bc202(100),3,2)
+36.26.750 36.28.630 fade(#0bc202(100),#0bc202(0))
+36.28.630 36.58.640 group(left) beat(#0bc202(100),2,0)
+36.28.630 36.58.640 group(right) beat(#0bc202(100),2,1)
+
+song 37.00.280 Avicii - Hope There’s Someone (Avicii by Avicii)
+36.58.640 37.00.280 group(wall) fade(#0bc202(100),#0bc202(0))
+37.00.280 37.29.320 energy(white)
+37.29.320 38.30.770 glow(white(100),white(50),2)
+38.30.770 39.37.960 group(ceiling) glow(white(50),white(100),2)
+38.30.770 39.37.960 group(wall) glow(white(100),white(50),2)
+39.37.960 39.39.880 fade(white(100),white(0)) 
+39.39.880 40.25.990 group(ceiling) beat(white(100),3,0)
+39.39.880 40.25.990 group(left) beat(white(100),3,1)
+39.39.880 40.25.990 group(right) beat(white(100),3,2)
+40.25.990 40.29.580 fade(white(100),white(0)) 
+
+song 40.29.580 Avicii - Hey Brother 
+40.29.580 41.00.470 glow(#ff01c8(50),#ff01c8(100),2) 
+41.00.470 41.29.320 glow(#ff01c8(50),#ff01c8(100),1) 
+41.29.320 41.31.290 fade(#ff01c8(100),#ff01c8(0)) 
+41.31.290 42.00.070 group(left) glow(#ff01c8(100),#ff01c8(50),1) 
+41.31.290 42.00.070 group(right) glow(#ff01c8(50),#ff01c8(100),1) 
+42.00.070 42.02.010 group(wall) fade(#ff01c8(100),#ff01c8(0)) 
+42.02.010 42.43.800 glow(#ff01c8(50),#ff01c8(100),1) 
+42.43.800 42.44.260 strobe(white) 
+42.44.260 43.14.980 group(ceiling) beat(#ff01c8(100),3,0) 
+42.44.260 43.14.980 group(left) beat(#ff01c8(100),3,1) 
+42.44.260 43.14.980 group(right) beat(#ff01c8(100),3,2) 
+43.14.980 43.51.350 fade(#ff01c8(100),#ff01c8(40)) 
+
+song 43.51.350 Avicii - Addicted To You
+43.51.350 44.40.130 glow(#a0adff(40),#a0adff(100),2)
+44.40.130 45.02.600 glow(#a0adff(40),#a0adff(100),1)
+
+song 45.02.600 Avicii - Addicted To You (Avicii by Avicii)
+45.02.600 45.48.300 fade(#a0adff(100),#a0adff(20))
+45.48.300 46.18.770 group(ceiling) beat(#a0adff(100),2,0) 
+45.48.300 46.18.770 group(wall) beat(#a0adff(100),2,1) 
+46.18.770 46.22.570 fade(#a0adff(100),#a0adff(20)) 
+
+song 46.22.570 Avicii - The Days
+46.22.570 47.00.360 glow(#ffff00(100),#ffff00(50),2) 
+47.00.360 47.15.480 glow(#ffff00(100),#ffff00(50),1) 
+47.15.480 47.53.160 group(left) glow(#ffff00(100),#ffff00(50),1) 
+47.15.480 47.53.160 group(right) glow(#ffff00(50),#ffff00(100),1) 
+47.53.160 48.00.830 group(wall) fade(#ffff00(100),#ffff00(20))
+48.00.830 48.41.460 group(ceiling) glow(#ffff00(50),#ffff00(100),2) 
+48.00.830 48.41.460 group(wall) glow(#ffff00(100),#ffff00(50),2)
+48.41.460 49.19.290 group(left) glow(#ffff00(50),#ffff00(100),1) 
+48.41.460 49.19.290 group(right) glow(#ffff00(100),#ffff00(50),1) 
+49.19.290 49.49.500 group(left) glow(#ffff00(50),#ffff00(100),2) 
+49.19.290 49.49.500 group(right) glow(#ffff00(100),#ffff00(50),2)
+49.49.500 50.19.730 beat(#ffff00(100),2) 
+50.19.730 50.49.990 group(ceiling) beat(#ffff00(100),3,0)
+50.19.730 50.49.990 group(left) beat(#ffff00(100),3,1)
+50.19.730 50.49.990 group(right) beat(#ffff00(100),3,2)
+50.49.990 50.54.450 fade(#ffff00(100),#ffff00(20))
+
+song 50.54.450 Avicii - The Nights
+50.54.450 51.23.020 glow(#96ffaf(50),#96ffaf(100),1)
+51.23.020 51.55.400 group(left) glow(#96ffaf(50),#96ffaf(100),2)
+51.23.020 51.55.400 group(right) glow(#96ffaf(100),#96ffaf(50),2)
+51.55.400 52.25.920 group(ceiling) beat(#96ffaf(100),2,0)
+51.55.400 52.25.920 group(wall) beat(#96ffaf(100),2,1)
+52.25.920 52.27.790 fade(#96ffaf(100),#96ffaf(0))
+
+song 52.27.790 Avicii - Waiting For Love
+52.27.790 52.28.740 group(ceiling) static(#0303ff(100))
+52.28.740 52.29.670 group(wall) static(#ffee03(100))
+52.29.670 52.31.540 group(ceiling) fade(#ff0505(100),#ff0505(50))
+52.31.540 52.32.490 fade(#0303ff(100),#0303ff(50))
+52.32.490 52.33.420 fade(#ffee03(100),#ffee03(50))
+52.33.420 52.35.290 fade(#ff0505(100),#ff0505(0))
+52.35.290 52.49.360 glow(#0303ff(50),#0303ff(100),2)
+52.49.360 52.50.290 fade(#0303ff(100),#0303ff(0))
+52.50.290 53.05.140 glow(#0303ff(100),#0303ff(50),1)
+53.05.140 53.35.300 fade(#0303ff(50),#0303ff(100))
+53.35.300 53.42.790 fade(#0303ff(100),#0303ff(0))
+53.42.790 54.11.860 group(left) glow(#0303ff(100),#0303ff(50),1)
+53.42.790 54.11.860 group(right) glow(#0303ff(50),#0303ff(100),1)
+54.11.860 54.12.790 group(ceiling) strobe(white)
+54.12.790 54.42.800 group(ceiling) beat(#0303ff(100),3,0)
+54.12.790 54.42.800 group(left) beat(#0303ff(100),3,1)
+54.12.790 54.42.800 group(right) beat(#0303ff(100),3,2)
+
+song 54.42.800 Avicii - City Lights
+54.42.800 56.09.040 glow(#05a3ff(100),#05a3ff(50),2)
+56.09.040 56.54.050 group(left) beat(#05a3ff(100),4,0) 
+56.09.040 56.54.050 group(right) beat(#05a3ff(100),4,2) 
+56.54.050 56.57.330 group(wall) fade(#05a3ff(100),#05a3ff(0))
+
+song 56.57.890 Avicii - Sunset Jesus
+56.57.890 57.25.330 glow(#ff05de(100),#ff05de(50),2)
+57.25.330 58.01.890 group(ceiling) glow(#ff05de(100),#ff05de(50),2)
+57.25.330 58.01.890 group(wall) glow(#ff05de(50),#ff05de(100),2)
+58.01.890 58.47.630 group(ceiling) beat(#ff05de(100),3,0) 
+58.01.890 58.47.630 group(left) beat(#ff05de(100),3,1) 
+58.01.890 58.47.630 group(right) beat(#ff05de(100),3,2) 
+58.47.630 59.00.880 fade(#ff05de(100),#ff05de(20))
+
+song 59.00.880 Avicii - Can’t Catch Me
+59.00.880 59.08.750 fade(#ff7605(20),#ff7605(100)) 
+59.08.750 59.38.750 glow(#ff7605(40),#ff7605(80),2)
+59.38.750 60.02.740 energy(#ff7605(100))
+60.02.740 60.44.750 glow(#ff7605(40),#ff7605(80),1)
+60.44.750 61.05.750 energy(#ff7605(100))
+61.05.750 61.08.750 fade(#ff7605(100),#ff7605(20))
+
+song 61.08.750 Avicii - Trouble
+61.08.750 61.17.070 fade(#9b05ff(20),#9b05ff(100))
+61.17.070 61.50.120 group(left) glow(#9b05ff(100),#9b05ff(50),2)
+61.17.070 61.50.120 group(right) glow(#9b05ff(50),#9b05ff(100),2)
+61.50.120 61.54.260 group(wall) fade(#9b05ff(100),#9b05ff(0))
+61.54.260 62.23.230 group(left) glow(#9b05ff(100),#9b05ff(50),1)
+61.54.260 62.23.230 group(right) glow(#9b05ff(50),#9b05ff(100),1)
+
+song 62.23.230 Avicii ft. Vargas & Lagola - Friend Of Mine
+62.23.230 62.31.960 fade(#ffea4b(100),#ffea4b(40))
+62.31.960 63.24.400 glow(#ffea4b(50),#ffea4b(100),2) 
+63.24.400 63.48.300 group(ceiling) beat(#ffea4b(100),6,0)
+63.24.400 63.48.300 group(left) beat(#ffea4b(100),6,2)
+63.24.400 63.48.300 group(right) beat(#ffea4b(100),6,4)
+63.48.300 63.50.510 fade(#ffea4b(100),#ffea4b(40))
+
+song 63.50.510 Avicii ft. AlunaGeorge - What Would I Change It To
+63.50.510 63.59.120 fade(#ff9dbe(40),#ff9dbe(100))
+63.59.120 64.25.420 glow(#ff9dbe(100),#ff9dbe(50),1)
+64.25.420 65.00.320 glow(#ff9dbe(100),#ff9dbe(50),2) 
+65.00.320 65.26.510 group(left) beat(#ff9dbe(100),4,0)
+65.00.320 65.26.510 group(right) beat(#ff9dbe(100),4,2)
+
+song 65.26.510 Avicii ft. Billy Raffoul - You Be Love
+65.26.510 65.28.130 fade(#4b3bff(100),#4b3bff(50))
+65.28.130 65.34.140 fade(#4b3bff(50),#4b3bff(100))
+65.34.140 66.12.520 glow(#4b3bff(50),#4b3bff(100),1)
+66.12.520 66.34.610 fade(#4b3bff(50),#4b3bff(100))
+66.34.610 66.35.570 strobe(white)
+66.35.570 66.50.930 beat(#4b3bff(100),2)
+66.50.930 66.54.380 fade(#4b3bff(100),#4b3bff(0))
+
+song 66.54.380 Avicii ft. Sandro Cavazza - Without You
+66.54.380 66.57.960 group(ceiling) fade(white(100),white(0))
+66.57.960 67.01.570 group(left) fade(white(100),white(0))
+67.01.570 67.05.170 group(right) fade(white(100),white(0))
+67.05.170 67.08.720 fade(white(100),white(0))
+67.08.720 67.35.130 glow(white(100),white(50),2)
+67.35.130 67.37.370 fade(white(50),white(0))
+67.37.370 68.06.030 group(left) glow(white(100),white(50),1)
+67.37.370 68.06.030 group(right) glow(white(50),white(100),1)
+68.06.030 68.32.690 group(ceiling) beat(white(100),3,0)
+68.06.030 68.32.690 group(left) beat(white(100),3,1)
+68.06.030 68.32.690 group(right) beat(white(100),3,2)
+68.32.690 68.34.700 fade(white(100),white(0))
+
+song 68.34.700 Avicii - SOS
+68.34.700 68.55.690 glow(yellow(100),yellow(50),2)
+68.55.690 68.58.700 fade(yellow(100),yellow(0))
+68.58.700 69.27.500 glow(yellow(100),yellow(50),2)
+69.27.500 69.46.710 group(left) glow(yellow(100),yellow(50),2)
+69.27.500 69.46.710 group(right) glow(yellow(50),yellow(100),2)
+69.46.710 70.02.910 glow(yellow(50),yellow(100),2)
+70.02.910 70.05.900 fade(yellow(100),yellow(0))
+70.05.900 70.39.500 glow(yellow(50),yellow(100),2) 
+70.39.500 70.58.670 group(left) glow(yellow(100),yellow(50),2)
+70.39.500 70.58.670 group(right) glow(yellow(50),yellow(100),2)
+70.58.670 71.08.420 fade(yellow(100),yellow(0))
+
+song 71.08.420 Avicii - Heaven
+71.08.420 71.24.160 fade(heavenblue(100),off)
+71.24.160 71.39.890 glow(heavenblue(100),heavenblue(50),2)
+71.39.890 72.11.550 glow(heavenblue(100),heavenblue(50),1)
+72.11.550 72.24.760 group(left) beat(heavenblue,2,0)
+72.11.550 72.24.630 group(right) beat(heavenblue,2,1)
+72.24.630 72.27.110 fade(heavenblue(100),off)
+72.27.110 72.42.850 glow(heavenblue(100),heavenblue(50),2)
+72.42.850 73.14.310 glow(heavenblue(100),heavenblue(50),1)
+73.14.310 73.30.060 fade(heavenblue(100),off)
+73.30.060 73.45.310 glow(heavenblue(100),heavenblue(50),1) 
+73.45.310 73.45.800 strobe(white)
+73.45.800 74.17.270 beat(heavenblue)
+74.17.270 74.33.010 group(left) glow(heavenblue(100),heavenblue(50),1)
+74.17.270 74.33.010 group(right) glow(heavenblue(50),heavenblue(100),1)
+74.33.010 75.20.230 group(ceiling) beat(heavenblue,3,0)
+74.33.010 75.20.230 group(left) beat(heavenblue,3,1)
+74.33.010 75.20.230 group(right) beat(heavenblue,3,2)
+75.20.230 75.35.970 glow(heavenblue(100),heavenblue(50),1)
+75.35.970 75.43.890 fade(heavenblue(100),off)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -6,11 +6,18 @@ color pink #ff00ff
 color yellow #ffff00
 color cyan #00ffff
 color orange #fb5b1f
+color rarekleur #ffd000
 
-00.00.000 00.03.690 fade(off,#ffd000) %Nadia Ali - Rapture (Avicii Remix)
-00.03.690 00.18.540 static(white)%glow(#ffd000(40),#ffd000(80),1) % waar 1 de periode van de sin golf is 
-00.18.540 00.19.000 static(#ffd000(100))
-00.19.000 00.48.080 freq(#ffd000(100),200) % sync lichten met de frequentie 200hz
+group all(1,2,3,4,6,7) default
+group ceiling(1,2)
+group wall(3,4,6,7)
+group left(3,4)
+group right(6,7)
+
+00.00.000 00.03.690 fade(off,rarekleur) %Nadia Ali - Rapture (Avicii Remix)
+00.03.690 00.18.540 group(ceiling) glow(#ffd000(40),#ffd000(80),1)
+00.18.540 00.19.000 group(left) static(#ffd000(100))
+00.19.000 00.48.080 beat(#ffd000(100)) % sync lichten met de frequentie 200hz
 00.48.080 01.17.620 fade(#ffd000(50),#ffd000(100))
 01.17.620 02.09.310 beat(#ffd000(100))
 02.09.310 02.24.070 fade(#ffd000(100),off)

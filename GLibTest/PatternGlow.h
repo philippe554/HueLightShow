@@ -15,16 +15,16 @@ public:
 		periods = _periods;
 	}
 
-	LightColor get(float time)
+	LightColor get(float time, int id)
 	{
 		float x = (time - begin) / (end - begin);
 		float ratio = (std::cos(x * PI * 2.0 * periods) + 1.0f) / 2.0f;
 
 		LightColor l = LightColor();
 
-		l.red = c2.red * ratio + c1.red * (1 - ratio);
-		l.green = c2.green * ratio + c1.green * (1 - ratio);
-		l.blue = c2.blue * ratio + c1.blue * (1 - ratio);
+		l.red = c1.red * ratio + c2.red * (1 - ratio);
+		l.green = c1.green * ratio + c2.green * (1 - ratio);
+		l.blue = c1.blue * ratio + c2.blue * (1 - ratio);
 
 		return l;
 	}

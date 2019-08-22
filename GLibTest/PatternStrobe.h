@@ -15,21 +15,26 @@ public:
 		color = _color;
 	}
 
-	LightColor get(float time)
+	LightColor get(float time, int id)
 	{
-		if (last)
+		if (last.count(id) == 0)
 		{
-			last = false;
+			last[id] = true;
+		}
+
+		if (last[id])
+		{
+			last[id] = false;
 			return LightColor(0, 0, 0);
 		}
 		else
 		{
-			last = true;
+			last[id] = true;
 			return color;
 		}
 	}
 
 private:
 	LightColor color;
-	bool last = false;
+	std::map<int, bool> last;
 };

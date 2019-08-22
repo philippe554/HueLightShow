@@ -13,7 +13,7 @@ public:
 		color = _color;
 	}
 
-	LightColor get(float time)
+	LightColor get(float time, int id)
 	{
 		return color;
 	}

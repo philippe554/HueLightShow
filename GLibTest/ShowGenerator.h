@@ -72,11 +72,41 @@ public:
 	using View::View;
 	void init(MediaPlayer* mp)
 	{
-		addView<Button>(20, 20, 250, 40, [&scheduled = scheduled, &m = workerMutex]()
+		auto selectList = addView<MovingView>(0, 0, 510, -1, false, true);
+
+		std::string path = "./";
+		int i = 0;
+		for (const auto & entry : fs::directory_iterator(path))
 		{
-			std::unique_lock<std::mutex> lock(m);
-			scheduled = true;
-		}, "  Load");
+			if (entry.path().extension().generic_string() == ".lsh")
+			{
+				selectList->addView<Button>(20, 20 + i * 60, 450, 40, [file = entry.path(), &nextFile = nextFile, &m = workerMutex, &scheduled = scheduled]()
+				{
+					std::unique_lock<std::mutex> lock(m);
+					scheduled = true;
+					nextFile = file.generic_string();
+				}, "  " + entry.path().filename().generic_string());
+				i++;
+			}
+
+		}
+
+		boostSlider = addView<Slider>(650, 140, 250, 40, [&](float ratio) 
+		{
+			if (lightShow)
+			{
+				lightShow->setBoost(ratio);
+			}
+		}
+		, 0.0);
+
+		forceCheckbox = addView<CheckBox>(650, 200, 40, 40, [&](bool state)
+		{
+			if (lightShow)
+			{
+				lightShow->setForce(state);
+			}
+		}, false);
 
 		//addView<Button>(400, 60, 20, 40, []() {})->setHorizontalDragable(400, 500, [&](float ratio) {amountOfClusters = (ratio * 5) + 1; });
 
@@ -102,13 +132,19 @@ public:
 	{
 		if (inProgress)
 		{
-			w->print("Loading...", c->get(C::Black), w->get(20), { 330, 20, 500, 60 });
+			w->print("Loading...", c->get(C::Black), w->get(20), { 530, 20, 700, 60 });
 		}
 		else if (scheduled)
 		{
-			w->print("Scheduled...", c->get(C::Black), w->get(20), { 330, 20, 500, 60 });
+			w->print("Scheduled...", c->get(C::Black), w->get(20), { 530, 20, 700, 60 });
 		}
 
+		w->print("Settings", c->get(C::Black), w->get(20), { 530, 80, 700, 120 });
+
+		w->print("Boost", c->get(C::Black), w->get(20), { 530, 140, 700, 180 });
+
+		w->print("Kitchen", c->get(C::Black), w->get(20), { 530, 200, 700, 240 });
+ 
 		//w->print(std::to_string(amountOfClusters), c->get(C::Black), w->get(20), { 330, 60, 500, 100 });
 	}
 
@@ -353,16 +389,11 @@ private:
 				mediaPlayer->setSongData(songData, songPartData);
 
 				std::shared_ptr<LightShow> lightShow = calculateLightShow(songData, songPartData);
-				mediaPlayer->setLightShow(lightShow);*/
+				mediaPlayer->setLightShow(lightShow);*/	
 
-				PatternParser pp;
-				pp.setSongData(songData);
-				pp.parseFile("data.lsh");
-				std::vector<std::shared_ptr<Pattern>> patterns = pp.get();
-
-				GLib::Out << "Show loaded, " << patterns.size() << " patterns.\n";
-
-				std::shared_ptr<LightShow> lightShow = std::make_shared<LightShow>(patterns);
+				lightShow = std::make_shared<LightShow>(nextFile, songData);
+				lightShow->setBoost(boostSlider->getRatio());
+				lightShow->setForce(forceCheckbox->getState());
 
 				mediaPlayer->setLightShow(lightShow);
 
@@ -382,6 +413,10 @@ private:
 	bool stop = false;
 	bool inProgress = false;
 	bool scheduled = false;
-	int amountOfClusters = 6;
-	//ShowPlot* showPlot;
+	std::string nextFile;
+
+	std::shared_ptr<LightShow> lightShow;
+
+	Slider* boostSlider;
+	CheckBox* forceCheckbox;
 };

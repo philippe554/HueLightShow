@@ -16,10 +16,16 @@
     <Filter Include="Source Files\pattern">
       <UniqueIdentifier>{b8aa0935-a898-4d16-ace1-81528b6cf941}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\razer">
+      <UniqueIdentifier>{801a9274-26ff-4fd5-84a9-423e27d96664}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Razer.cpp">
+      <Filter>Source Files\razer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -71,9 +77,27 @@
     <ClInclude Include="PatternStrobe.h">
       <Filter>Source Files\pattern</Filter>
     </ClInclude>
+    <ClInclude Include="RzChromaSDKDefines.h">
+      <Filter>Source Files\razer</Filter>
+    </ClInclude>
+    <ClInclude Include="RzChromaSDKTypes.h">
+      <Filter>Source Files\razer</Filter>
+    </ClInclude>
+    <ClInclude Include="RzErrors.h">
+      <Filter>Source Files\razer</Filter>
+    </ClInclude>
+    <ClInclude Include="Razer.h">
+      <Filter>Source Files\razer</Filter>
+    </ClInclude>
+    <ClInclude Include="TextBoxTest.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="data.lsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="avicii mix.lsh">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

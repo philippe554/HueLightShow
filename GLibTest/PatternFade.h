@@ -14,7 +14,7 @@ public:
 		c2 = _c2;
 	}
 
-	LightColor get(float time)
+	LightColor get(float time, int id)
 	{
 		float ratio = (time - begin) / (end - begin);
 

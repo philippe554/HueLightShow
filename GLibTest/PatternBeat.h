@@ -7,20 +7,21 @@
 class PatternBeat : public Pattern
 {
 public:
-	PatternBeat(float _begin, float _end, std::string _group, LightColor _color, int _skip)
+	PatternBeat(float _begin, float _end, std::string _group, LightColor _color, int _skip, int _offset)
 		:Pattern(_begin, _end, _group)
 	{
 		color = _color;
 		skip = _skip;
+		offset = _offset;
 	}
 
-	LightColor get(float time)
+	LightColor get(float time, int id)
 	{
 		float minimum = 100;
 
 		for (int i = 0; i < beats.size(); i++)
 		{
-			if (i % skip == 0)
+			if ((i + offset) % skip == 0)
 			{
 				float diff = std::abs(time - beats[i]);
 				if (diff < minimum)
@@ -49,5 +50,6 @@ public:
 private:
 	LightColor color;
 	int skip;
+	int offset;
 	std::vector<float> beats;
 };

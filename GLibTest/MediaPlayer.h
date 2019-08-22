@@ -11,6 +11,7 @@
 
 #include "dlib/clustering.h"
 
+#include "Razer.h"
 #include "GLibMain.h"
 #include "Hue.h"
 #include "ShowPlot.h"
@@ -53,7 +54,7 @@ public:
 			this->play = !this->play;
 		}, " Play");
 
-		addView<Button>(10, int(place.bottom - place.top - 200 - 90), int(place.right - place.left - 20), 80, [this]()
+		addView<Button>(10, int(place.bottom - place.top - 200 - 90), int((place.right - place.left) / 2 - 20), 80, [this]()
 		{
 			if (!hue)
 			{
@@ -69,6 +70,14 @@ public:
 				hue->setplayShow(!hue->isPlayShow());
 			}
 		}, " Hue Play/Pause");
+
+		addView<Button>(int((place.right - place.left) / 2 + 10), int(place.bottom - place.top - 200 - 90), int((place.right - place.left) / 2 - 20), 80, [this]()
+		{
+			if (!razer)
+			{
+				razer = std::make_unique<Razer>();
+			}
+		}, " Sync Razer");
 
 		addMouseListener(WM_LBUTTONDOWN, [&](int x, int y)
 		{
@@ -125,31 +134,31 @@ public:
 
 		if (lightShow)
 		{
-			if (hue && hue->isPlayShow())
-			{
-				const auto& colors = lightShow->getLastColors();
-				float size = (place.right - place.left) / colors.size();
+			auto lights = lightShow->getDefaultLights();
+			int amount = lights.size();
+			float size = (place.right - place.left) / amount;
 
-				for (const auto& color : colors)
+			for (int i = 0; i < lights.size(); i++)
+			{
+				LightColor color;
+
+				if (hue && hue->isPlayShow())
 				{
-					D2D1_RECT_F box = { color.first * size, place.bottom - place.top - 200, size + color.first * size, place.bottom - place.top };
-					rt->FillRectangle(box, c->get(C::Black));
-					D2D1_RECT_F light = { color.first * size + 10, place.bottom - place.top - 200 + 10, size + color.first * size - 10, place.bottom - place.top - 10 };
-					rt->FillRectangle(light, c->get(color.second.red * 255, color.second.green * 255, color.second.blue * 255));
+					color = lightShow->getLastState(lights[i]);
 				}
-			}
-			else
-			{
-				int amount = 5;
-				float size = (place.right - place.left) / amount;
-				for (int i = 0; i < amount; i++)
+				else
 				{
-					auto color = lightShow->getState(i);
+					color = lightShow->getState(lights[i]);
+				}
 
-					D2D1_RECT_F box = { i * size, place.bottom - place.top - 200, size + i * size, place.bottom - place.top };
-					rt->FillRectangle(box, c->get(C::Black));
-					D2D1_RECT_F light = { i * size + 10, place.bottom - place.top - 200 + 10, size + i * size - 10, place.bottom - place.top - 10 };
-					rt->FillRectangle(light, c->get(color.red * 255, color.green * 255, color.blue * 255));
+				D2D1_RECT_F box = { i * size - 1, place.bottom - place.top - 200, size + i * size + 1, place.bottom - place.top };
+				rt->FillRectangle(box, c->get(C::Black));
+				D2D1_RECT_F light = { i * size + 10, place.bottom - place.top - 200 + 10, size + i * size - 10, place.bottom - place.top - 10 };
+				rt->FillRectangle(light, c->get(color.red * 255, color.green * 255, color.blue * 255));
+
+				if(i == 0 && razer)
+				{
+					razer->setColor(color.red, color.green, color.blue);
 				}
 			}
 		}
@@ -261,6 +270,7 @@ private:
 	std::shared_ptr<const SongPartData> songPartData;
 	std::shared_ptr<LightShow> lightShow;
 	std::unique_ptr<Hue> hue;
+	std::unique_ptr<Razer> razer;
 
 	D2D1_RECT_F songScrubBar = { 120, 10, 120 + 800, 10 + 100 };
 	ShowPlot* showPlot;

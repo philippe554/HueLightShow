@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <functional>
+#include <stdexcept>
 
 #include <Windows.h>
 #include <Windowsx.h>
@@ -207,6 +208,45 @@ namespace GLib
 		int verticalStart;
 	};
 
+	class CheckBox : public View
+	{
+	public:
+		using View::View;
+		void init(std::function<void(bool state)> _onClick, bool default);
+
+		void render(RT * rt, Writer * w, Color * c, D2D1_RECT_F& visibleRect) override;
+
+		bool getState();
+
+	private:
+		std::function<void(bool state)> onClick;
+		int state = 0;
+		bool activated = true;
+		D2D1_RECT_F box1;
+		D2D1_RECT_F box2;
+		D2D1_RECT_F box3;
+	};
+
+	class Slider : public View
+	{
+	public:
+		using View::View;	
+		void init(std::function<void(float ratio)> _onClick, float default);
+
+		void render(RT * rt, Writer * w, Color * c, D2D1_RECT_F& visibleRect) override;
+
+		float getRatio();
+	private:
+		Button* left;
+		Button* right;
+		Button* bar;
+
+		D2D1_RECT_F box1;
+		D2D1_RECT_F box2;
+
+		std::function<void(float ratio)> onClick;
+	};
+
 	class MovingView : public View
 	{
 	public:
@@ -244,6 +284,20 @@ namespace GLib
 
 		int buttonSize = 20;
 		int spaceSize = 5;
+	};
+
+	class TextBox : public View
+	{
+	public:
+		using View::View;
+		void init();
+
+		void render(RT* rt, Writer* w, Color* c, D2D1_RECT_F& visibleRect) override;
+		void update() override;
+		void winEvent(Frame* frame, HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) override;
+
+	private:
+		std::string text = "Default";
 	};
 
 	class TabView : public View

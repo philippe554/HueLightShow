@@ -139,10 +139,14 @@ public:
 
 						web::json::value lights = group.second.at(L"lights");
 
+
+						GLib::Out << "Hue Group: " << hueGroup.name << " (" << hueGroup.id << ") " << hueGroup.type << ": ";
 						for (const auto light : lights.as_array())
 						{
 							hueGroup.lights.push_back(std::stoi(light.as_string()));
+							GLib::Out << hueGroup.lights.back().id << " ";
 						}
+						GLib::Out << "\n";
 
 						hueGroups.push_back(hueGroup);
 					}
@@ -242,10 +246,9 @@ private:
 
 		const HueGroup& group = *std::find_if(hueGroups.begin(), hueGroups.end(), [&](HueGroup& group) {return group.id == entertainmentGroup; });
 
-		int i = 0;
 		for (const auto& light : group.lights)
 		{
-			LightColor color = lightShow && playShow ? lightShow->getState(i) : LightColor(1, 1, 1);
+			LightColor color = lightShow && playShow ? lightShow->getState(light.id) : LightColor(1, 1, 1);
 
 			data.push_back(0x00);
 			data.push_back((light.id >> 8) & 0xff);
@@ -263,8 +266,6 @@ private:
 
 			data.push_back((blue >> 8) & 0xff);
 			data.push_back(blue & 0xff);
-
-			i++;
 		}
 
 		return data;
@@ -343,13 +344,13 @@ private:
 
 				updates++;
 
-				std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				std::this_thread::sleep_for(std::chrono::milliseconds(30));
 
 				float millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
 				
 				if (updates % 100 == 0)
 				{
-					GLib::Out << int(float(updates) * 1000.0 / millis) << " light updates per second \n";
+					//GLib::Out << int(float(updates) * 1000.0 / millis) << " light updates per second \n";
 				}
 			}
 

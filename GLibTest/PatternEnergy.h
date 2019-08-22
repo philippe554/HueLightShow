@@ -15,7 +15,7 @@ public:
 		color = _color;
 	}
 
-	LightColor get(float time)
+	LightColor get(float time, int id)
 	{
 		for (int i = 0; (i + 1) < energy.size(); i++)
 		{

@@ -48,12 +48,17 @@ public:
 
 	}
 
-	virtual bool inside(float time)
+	bool inside(float time)
 	{
 		return begin <= time && time <= end;
 	}
 
-	virtual LightColor get(float time) = 0;
+	std::string& getGroup()
+	{
+		return group;
+	}
+
+	virtual LightColor get(float time, int id) = 0;
 
 protected:
 	float begin;

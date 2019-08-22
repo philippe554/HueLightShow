@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include <vector>
 #include <memory>
 #include <fstream>
@@ -55,6 +55,14 @@ public:
 				std::vector<std::string> parts = split(line, ' ');
 				colors[parts[1]] = hexToColor(parts[2].substr(1, 6));
 			}
+			else if (line.find("song") == 0)
+			{
+				GLib::Out << "Found song\n";
+			}
+			else if (line.find("group") == 0)
+			{
+				std::vector<std::string> parts = split(line, ' ');
+			}
 			else
 			{
 				std::vector<std::string> parts = split(line, ' ');
@@ -85,7 +93,7 @@ public:
 		}
 		catch (std::out_of_range error)
 		{
-			GLib::Out << "Error parsing: " << line << " : " << error.what() << "\n";
+			GLib::Out << "Error parsing: \"" << line << "\" : " << error.what() << "\n";
 		}
 	}
 
@@ -334,4 +342,4 @@ private:
 	std::vector<std::shared_ptr<Pattern>> patterns;
 	std::map<std::string, LightColor> colors;
 	std::shared_ptr<const SongData> songData;
-};
+};*/
